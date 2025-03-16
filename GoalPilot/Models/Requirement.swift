@@ -1,0 +1,29 @@
+//
+//  Requirement.swift
+//  GoalPilot
+//
+//  Created by Rune Pollet on 16/06/2024.
+//
+//
+
+import Foundation
+import SwiftData
+
+@Model
+final class Requirement: Persistentable {
+    var creationDate: Date
+    var title: String
+    var info: String?
+    var isDeleted: Bool
+    var parent: Goal?
+    
+    init() {
+        self.creationDate = Date()
+        self.title = ""
+        self.isDeleted = false
+    }
+    
+    
+    // MARK: Persistentable
+    var isConfigured: Bool { parent != nil && !title.isEmpty }
+}

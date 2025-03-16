@@ -1,0 +1,183 @@
+//
+//  Activity.swift
+//  GoalPilot
+//
+//  Created by Rune Pollet on 16/06/2024.
+//
+//
+
+import SwiftUI
+import SwiftData
+
+@Model
+final class Activity: PlanningEvent, NotificationRepresentable, Persistentable {
+    var id: UUID
+    var title: String
+    var subtitle: String
+    var body: String
+    var isEnabled: Bool
+    var isDeleted: Bool
+    
+    var _parent: Planning?
+    var parent: Planning? {
+        get { _parent?.activeValue }
+        set { _parent = newValue }
+    }
+    
+    // Start Time & End Time
+    var weekday: Int
+    var startHour: Int
+    var startMinute: Int
+    var endHour: Int
+    var endMinute: Int
+    
+    // Color
+    var colorRed: CGFloat
+    var colorGreen: CGFloat
+    var colorBlue: CGFloat
+    var colorAlpha: CGFloat
+    var defaultColorRawValue: Int?
+    
+    init(weekday: Int) {
+        self.id = UUID()
+        self.title = "Activity"
+        self.subtitle = ""
+        self.body = ""
+        self.isEnabled = true
+        self.isDeleted = false
+        self.colorRed = 0
+        self.colorGreen = 0
+        self.colorBlue = 0
+        self.colorAlpha = 0
+        self.defaultColorRawValue = DefaultColor.random().rawValue
+        self.weekday = weekday
+        
+        // Set start and end time
+        let start = Calendar.current.dateComponents([.hour, .minute], from: .now)
+        let end = Calendar.current.dateComponents([.hour, .minute], from: .now.addingTimeInterval(3600))
+        self.startHour = start.hour!
+        self.startMinute = start.minute!
+        self.endHour = end.hour!
+        self.endMinute = end.minute!
+    }
+    
+    
+    // MARK: Accessibilities
+    var startTimeComponents: DateComponents {
+        get { DateComponents(hour: startHour, minute: startMinute, weekday: weekday) }
+        set {
+            self.startHour = newValue.hour ?? 9
+            self.startMinute = newValue.minute ?? 41
+        }
+    }
+    
+    var endTimeComponents: DateComponents {
+        get { DateComponents(hour: endHour, minute: endMinute, weekday: weekday) }
+        set {
+            self.endHour = newValue.hour ?? 9
+            self.endMinute = newValue.minute ?? 41
+        }
+    }
+    
+    /// Returns a boolean indicating wether the reference date has passed the activity.
+    func timeIntervalHasPassed() -> Bool {
+        let now = Calendar.current.dateComponents([.weekday, .hour, .minute], from: .now)
+        var isSameDay: Bool { now.weekday! == endTimeComponents.weekday! }
+        var dayHasPassed: Bool { now.weekday! > endTimeComponents.weekday! }
+        var hourHasPassed: Bool { now.hour! >= endTimeComponents.hour! }
+        var minuteHasPassed: Bool { now.minute! > endTimeComponents.minute! }
+        
+        return dayHasPassed || (isSameDay && hourHasPassed && minuteHasPassed)
+    }
+    
+    
+    // MARK: Fetch Support
+    /// Retrieves all activities with the given day identifier.
+    static func getAll(ofPlanning planning: Planning? = nil, onWeekday weekday: Int? = nil, from modelContext: ModelContext) -> [Activity] {
+        return (try? modelContext.fetch(Self.eventDescriptor(planning: planning, weekday: weekday))) ?? []
+    }
+    
+    
+    // MARK: Planning Event
+    var refDeadline: Date {
+        get { Calendar.current.date(from: startTimeComponents) ?? .now }
+        set { startTimeComponents = Calendar.current.dateComponents([.hour, .minute], from: newValue) }
+    }
+    
+    var refEnd: Date? {
+        get { Calendar.current.date(from: endTimeComponents) ?? .now }
+        set {
+            if let newValue {
+                endTimeComponents = Calendar.current.dateComponents([.hour, .minute], from: newValue)
+            }
+        }
+    }
+    
+    static func referenceDate(for date: Date) -> Date {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.hour, .minute, .weekday], from: date)
+        return calendar.date(from: components) ?? date
+    }
+    
+    static func eventDescriptor(planning: Planning?, weekday: Int? = nil) -> FetchDescriptor<Activity> {
+        guard let planning else { return .empty }
+        
+        let planningId = planning.persistentModelID
+        var predicate: Predicate<Activity> {
+            if let weekday {
+                return #Predicate<Activity> {
+                    $0._parent?.persistentModelID == planningId && $0.weekday == weekday && !$0.isDeleted
+                }
+            } else {
+                return #Predicate<Activity> {
+                    $0._parent?.persistentModelID == planningId && !$0.isDeleted
+                }
+            }
+        }
+        
+        let earliestHourFirst = SortDescriptor(\Activity.startHour, order: .forward)
+        let earliestMinuteFirst = SortDescriptor(\Activity.startMinute, order: .forward)
+        
+        return FetchDescriptor<Activity>(predicate: predicate, sortBy: [earliestHourFirst, earliestMinuteFirst])
+    }
+    
+    
+    // MARK: Notification Representable
+    var displayedDateComponents: DatePickerComponents { .hourAndMinute }
+    var trigger: UNNotificationTrigger {
+        UNCalendarNotificationTrigger(dateMatching: startTimeComponents, repeats: true)
+    }
+    
+    @MainActor
+    func getRequest() -> UNNotificationRequest {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.subtitle = subtitle
+        content.body = TextService.shared.motivatingExclamations.randomElement()!
+        content.sound = .default
+        
+        return .init(identifier: id.uuidString, content: content, trigger: trigger)
+    }
+    
+    @MainActor
+    func updateNotification(active: Bool) {
+        if isEnabled && active {
+            NotificationService.shared.add(request: getRequest())
+        } else {
+            NotificationService.shared.removeNotifications(with: [id.uuidString])
+        }
+    }
+    
+    
+    // MARK: Persistentable
+    func preDeletion(_ modelContext: ModelContext) {
+        let id = id
+        DispatchQueue.main.async {
+            NotificationService.shared.removeNotifications(with: [id.uuidString])
+        }
+    }
+    
+    var isConfigured: Bool {
+        return !subtitle.isEmpty && parent != nil
+    }
+}
