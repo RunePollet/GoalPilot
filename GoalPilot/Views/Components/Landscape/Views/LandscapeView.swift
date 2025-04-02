@@ -61,7 +61,7 @@ extension Landscape {
                                     .blur(radius: 15)
                             }
                         }
-                        .offset(x: size.width * 43.0/393.0, y: size.height * 23.0/292.0)
+                        .offset(x: size.width * 40.063/393.0, y: size.height * 23.0/292.0)
                 }
                 .frame(width: size.width, height: size.height)
                 .frame(maxHeight: .infinity, alignment: .bottom)

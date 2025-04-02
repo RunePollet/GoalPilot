@@ -25,11 +25,15 @@ class TimeOfDayService {
     /// Returns the current time of day.
     static func current() -> TimeOfDay {
         let hour = Calendar.current.component(.hour, from: Date())
-        if hour >= 6 && hour < 9 {
+        let startMorning = 6
+        let startDay = 9
+        let startEvening = 19
+        let startNight = 24
+        if hour >= startMorning && hour < startDay {
             return .sunrise
-        } else if hour >= 9 && hour < 18 {
+        } else if hour >= startDay && hour < startEvening {
             return .day
-        } else if hour >= 19 && hour < 24 {
+        } else if hour >= startEvening && hour < startNight {
             return .sunset
         } else {
             return .night
