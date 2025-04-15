@@ -48,23 +48,30 @@ struct ActivityForm: View {
                 .labeledContentStyle(.plain)
                 .foregroundStyle(.primary, Color.accentColor)
                 
-                // Interval
                 Section {
                     @Bindable var activity = activity
+                    
+                    // Interval
                     DatePicker("Start Time", selection: $activity.refDeadline, displayedComponents: activity.displayedDateComponents)
                     DatePicker("End Time", selection: .init(get: { activity.refEnd ?? activity.refDeadline+3600 }, set: { activity.refEnd = $0 }), displayedComponents: activity.displayedDateComponents)
-                }
-                
-                // Notification
-                Section("Notification") {
-                    @Bindable var activity = activity
+                    
+                    // Notification
                     Toggle("Notification at start", isOn: $activity.isEnabled)
                         .tint(.accentColor)
                         .disabled(NotificationService.shared.locked)
                 }
                 
-                // Remove button
                 if !isCreating {
+                    // Duplicate
+                    Section {
+                        NavigationLink(value: activity) {
+                            Text("Duplicate")
+                        }
+                        .foregroundStyle(.primary, Color.accentColor)
+                        .buttonStyle(.tappable)
+                    }
+                    
+                    // Remove button
                     Button("Remove", role: .destructive) {
                         showRemoveDialog = true
                     }
@@ -73,6 +80,9 @@ struct ActivityForm: View {
             }
             .navigationDestination(for: TextPropertyEditor<Activity>.Model.self) { model in
                 TextPropertyEditor(model: model)
+            }
+            .navigationDestination(for: Activity.self) { activity in
+                DuplicationView(object: activity, objectDisplayName: "activity")
             }
             .sheet(isPresented: $showDefaultColors) {
                 NavigationStack {
@@ -83,15 +93,6 @@ struct ActivityForm: View {
                 Button("Remove", role: .destructive) {
                     activity.delete(from: modelContext)
                     dismiss()
-                }
-            }
-            .onAppear {
-                if isCreating {
-                    let calendar = Calendar.current
-                    let components = calendar.dateComponents([.hour, .minute], from: .now)
-                    let date = calendar.date(byAdding: components, to: calendar.startOfDay(for: date))!
-                    activity.refDeadline = date
-                    activity.refEnd = date + 3600
                 }
             }
         }

@@ -10,7 +10,7 @@ import SwiftUI
 import SwiftData
 
 @Model
-final class Activity: PlanningEvent, NotificationRepresentable, Persistentable {
+final class Activity: RecurringPlanningEvent, NotificationRepresentable, Persistentable, Duplicatable {
     var id: UUID
     var title: String
     var subtitle: String
@@ -53,12 +53,12 @@ final class Activity: PlanningEvent, NotificationRepresentable, Persistentable {
         self.weekday = weekday
         
         // Set start and end time
-        let start = Calendar.current.dateComponents([.hour, .minute], from: .now)
-        let end = Calendar.current.dateComponents([.hour, .minute], from: .now.addingTimeInterval(3600))
+        let start = Calendar.current.dateComponents([.hour], from: .now)
+        let end = Calendar.current.dateComponents([.hour], from: .now.addingTimeInterval(3600))
         self.startHour = start.hour!
-        self.startMinute = start.minute!
+        self.startMinute = 0
         self.endHour = end.hour!
-        self.endMinute = end.minute!
+        self.endMinute = 0
     }
     
     
@@ -179,5 +179,27 @@ final class Activity: PlanningEvent, NotificationRepresentable, Persistentable {
     
     var isConfigured: Bool {
         return !subtitle.isEmpty && parent != nil
+    }
+    
+    
+    // MARK: Duplicatable
+    func duplicate() -> Activity {
+        let duplicate = Activity(weekday: self.weekday)
+        duplicate.title = self.title
+        duplicate.subtitle = self.subtitle
+        duplicate.body = self.body
+        duplicate.isEnabled = self.isEnabled
+        duplicate.isDeleted = self.isDeleted
+        duplicate._parent = self._parent
+        duplicate.colorRed = self.colorRed
+        duplicate.colorGreen = self.colorGreen
+        duplicate.colorBlue = self.colorBlue
+        duplicate.colorAlpha = self.colorAlpha
+        duplicate.defaultColorRawValue = self.defaultColorRawValue
+        duplicate.startHour = self.startHour
+        duplicate.startMinute = self.startMinute
+        duplicate.endHour = self.endHour
+        duplicate.endMinute = self.endMinute
+        return duplicate
     }
 }

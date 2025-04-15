@@ -97,7 +97,6 @@ struct MultiPicker<Value: Equatable, Label: View, Row: View>: View {
 
 private extension MultiPicker {
     struct Selectable: Identifiable {
-        
         var value: Value
         var isSelected: Bool
         var id: UUID = UUID()

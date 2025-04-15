@@ -51,7 +51,7 @@ struct PlanningForm: View {
             Section {
                 ForEach(1..<8) { weekday in
                     NavigationLink(value: SelectedWeekday(weekday: weekday, planning: planning)) {
-                        LabeledContent(weekday.weekdayDescription?.capitalized ?? "", value: getEventCount(for: weekday))
+                        LabeledContent(weekday.weekdayDescription!.capitalized, value: getEventCount(for: weekday))
                     }
                 }
             } header: {

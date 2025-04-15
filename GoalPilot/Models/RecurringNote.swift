@@ -11,7 +11,7 @@ import UserNotifications
 
 /// An object which describes a recurring note and from which values a UNNotificationRequest can be extracted. A recurring note recurs weekly and is planning- and day-specific.
 @Model
-final class RecurringNote: NotificationRepresentable, PlanningEvent, Persistentable {
+final class RecurringNote: NotificationRepresentable, RecurringPlanningEvent, Persistentable, Duplicatable {
     var id: UUID
     var title: String
     var subtitle: String
@@ -120,4 +120,24 @@ final class RecurringNote: NotificationRepresentable, PlanningEvent, Persistenta
     }
     
     var isConfigured: Bool { !subtitle.isEmpty && parent != nil }
+    
+    
+    // MARK: Duplicatable
+    func duplicate() -> RecurringNote {
+        let duplicate = RecurringNote(weekday: self.weekday)
+        duplicate.title = self.title
+        duplicate.subtitle = self.subtitle
+        duplicate.body = self.body
+        duplicate.isEnabled = self.isEnabled
+        duplicate.isDeleted = self.isDeleted
+        duplicate._parent = self._parent
+        duplicate.colorRed = self.colorRed
+        duplicate.colorGreen = self.colorGreen
+        duplicate.colorBlue = self.colorBlue
+        duplicate.colorAlpha = self.colorAlpha
+        duplicate.defaultColorRawValue = self.defaultColorRawValue
+        duplicate.hour = self.hour
+        duplicate.minute = self.minute
+        return duplicate
+    }
 }

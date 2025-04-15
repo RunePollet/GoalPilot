@@ -35,28 +35,42 @@ struct LargeDateCell: View {
                 .foregroundStyle(.secondary)
                 
                 // Activities and notifications
-                ForEach(events, id: \.persistentModelID) { event in
-                    if let activity = event as? Activity {
-                        ActivityRow(activity: activity, minimalist: true, canBeCompleted: false)
-                    }
-                    else if let notification = event as? RecurringNote {
-                        SmallPlanningEventRow(color: notification.color, title: notification.subtitle)
-                    }
-                    else {
-                        let reminder = event as! Reminder
-                        SmallPlanningEventRow(color: reminder.color, title: reminder.subtitle)
+                ForEach(Array(events.enumerated()), id: \.offset) { (i, event) in
+                    let maxEventRows = 4
+                    
+                    if i <= maxEventRows-1 {
+                        eventRow(event: event)
+                    } else if i == maxEventRows {
+                        Text("...")
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
             }
             .padding(10)
         }
-        .onAppear {
+        .onChange(of: planning, initial: true) {
             let weekday = calendar.component(.weekday, from: date)
             events = planning.getAllEvents(forWeekday: weekday, dayID: date.dayID, from: modelContext)
         }
     }
     
-    func dateFormatter(dateFormat: String) -> DateFormatter {
+    @ViewBuilder
+    private func eventRow(event: any PlanningEvent) -> some View {
+        if let activity = event as? Activity {
+            ActivityRow(activity: activity, minimalist: true, canBeCompleted: false)
+        }
+        else if let notification = event as? RecurringNote {
+            SmallPlanningEventRow(color: notification.color, title: notification.subtitle)
+        }
+        else {
+            let reminder = event as! Reminder
+            SmallPlanningEventRow(color: reminder.color, title: reminder.subtitle)
+        }
+    }
+    
+    private func dateFormatter(dateFormat: String) -> DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = dateFormat
         return formatter

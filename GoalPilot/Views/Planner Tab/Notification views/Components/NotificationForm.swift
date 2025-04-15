@@ -63,8 +63,19 @@ struct NotificationForm<T: NotificationRepresentable & PlanningEvent & Persisten
                 DatePicker("Deadline", selection: $wrapper.model.refDeadline, displayedComponents: wrapper.model.displayedDateComponents)
             }
             
-            // Remove button
             if !isCreating {
+                // Duplicate button
+                if wrapper.model is RecurringNote {
+                    Section {
+                        NavigationLink(value: wrapper.model) {
+                            Text("Duplicate")
+                        }
+                        .foregroundStyle(.primary, Color.accentColor)
+                        .buttonStyle(.tappable)
+                    }
+                }
+                
+                // Remove button
                 Button("Remove", role: .destructive) {
                     showRemoveDialog = true
                 }
@@ -73,6 +84,9 @@ struct NotificationForm<T: NotificationRepresentable & PlanningEvent & Persisten
         }
         .navigationDestination(for: TextPropertyEditor<ObservableModel<T>>.Model.self) { model in
             TextPropertyEditor(model: model)
+        }
+        .navigationDestination(for: RecurringNote.self) { recurringNote in
+            DuplicationView(object: recurringNote, objectDisplayName: "Recurring Note")
         }
         .sheet(isPresented: $showDefaultColors) {
             NavigationStack {
