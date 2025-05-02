@@ -26,7 +26,12 @@ struct RequirementForm: View {
                     LabeledContent("Title", value: requirement.title)
                 }
                 NavigationLink(value: TextPropertyEditor<Requirement>.Model(root: requirement, keyPath: \.info.boundString, title: "Description")) {
-                    LabeledContent("Description", value: requirement.info.boundString)
+                    LabeledContent {
+                        Text(requirement.info.boundString)
+                            .lineLimit(nil)
+                    } label: {
+                        Text("Description")
+                    }
                 }
             }
             .labeledContentStyle(.plain)

@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// A view that lets the user duplicate the given object on different weekdays.
-struct DuplicationView<T: Duplicatable & RecurringPlanningEvent>: View {
+struct DuplicationView<T: Duplicatable & RecurringPlanningEvent & NotificationRepresentable>: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
@@ -65,12 +65,14 @@ struct DuplicationView<T: Duplicatable & RecurringPlanningEvent>: View {
             .disabled(selectedDays.isEmpty)
         }
         .navigationTitle("Duplicate \(objectDisplayName.capitalized)")
+        .sensoryFeedback(.success, trigger: showAlert) { oldValue, newValue in
+            return newValue
+        }
         .alert("Duplicate Successful", isPresented: $showAlert) {
-            Button("OK") { dismiss() }
+            Button("Ok") { dismiss() }
         } message: {
             Text("Duplicated an \(objectDisplayName.lowercased()) on \(selectedDays.count) \(selectedDays.count > 1 ? "days" : "day").")
         }
-
     }
     
     func duplicate() {
@@ -87,6 +89,5 @@ struct DuplicationView<T: Duplicatable & RecurringPlanningEvent>: View {
         
         // Notify the user
         showAlert = true
-        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
     }
 }

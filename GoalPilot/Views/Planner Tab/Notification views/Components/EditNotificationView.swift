@@ -25,7 +25,7 @@ struct EditNotificationView<T: NotificationRepresentable & PlanningEvent & Persi
             .onDisappear {
                 if notification is Reminder {
                     notification.updateNotification(active: true)
-                } else if let planning = (notification as? RecurringNote)?.parent as? Planning {
+                } else if !navigationModel.isCreating, let planning = (notification as? RecurringNote)?.parent as? Planning {
                     notification.updateNotification(active: planning == plannerModel.currentPlanning)
                 }
             }

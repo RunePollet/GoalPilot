@@ -24,6 +24,11 @@ class MAAnimationHandler {
     var reachedPathwayToStar: Landscape.LandscapeView.StarConfiguration?
     var upcomingPathwayAfterStar: Landscape.LandscapeView.StarConfiguration?
     
+    // Feedback
+    var impactFeedback = false
+    var successFeedback = false
+    var errorFeedback = false
+    
     // Accessibility
     var isAnimating = false
     var totalDuration: CGFloat = 0
@@ -52,17 +57,10 @@ class MAAnimationHandler {
         currentMilestone = milestone
         isAnimating = true
         
-        // Prepare the impact generators
-        let popGenerator = UIImpactFeedbackGenerator(style: .soft)
-        let impactGenerator = UINotificationFeedbackGenerator()
-        popGenerator.prepare()
-        impactGenerator.prepare()
-        
         // Show the star and title
         animate(duration: 0.5, delay: 0, animation: .bouncy) {
             self.title = true
             self.star = true
-            popGenerator.impactOccurred()
         }
         animate(duration: 0.5, delay: 0.5, animation: .easeOut(duration: 0.5)) {
             self.starFace = true
@@ -94,7 +92,7 @@ class MAAnimationHandler {
         animate(duration: 0.3, delay: 0, animation: .easeOut(duration: 0.3)) {
             if let currentStar = self.currentStar, let index = self.landscapeStars.firstIndex(of: currentStar) {
                 self.landscapeStars[index].reached = true
-                impactGenerator.notificationOccurred(.success)
+                self.successFeedback.toggle()
             }
         }
         
@@ -112,7 +110,7 @@ class MAAnimationHandler {
             }
             sequence(duration: 8, delay: 0) {
                 self.textCarousel = true
-                impactGenerator.notificationOccurred(.error)
+                self.errorFeedback.toggle()
             }
         }
         

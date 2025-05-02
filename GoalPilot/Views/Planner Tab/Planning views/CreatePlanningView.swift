@@ -30,6 +30,11 @@ struct CreatePlanningView: View {
             }, cancelCompletion: {
                 plannerModel.updateCurrentPlanning(modelContext)
             }, doneCompletion: {
+                // Update all notifications
+                if planning == plannerModel.currentPlanning {
+                    NotificationService.shared.updateAllNotifications(for: planning)
+                }
+                
                 // Present the streak updater if this is the first planning
                 let plannings = try? modelContext.fetch(Planning.descriptor())
                 if plannings?.count == 1 && streakModel.weeklyStreak == 0 {

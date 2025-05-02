@@ -58,9 +58,6 @@ final class Goal {
         }
         
         if achieved {
-            let generator = UIImpactFeedbackGenerator(style: .soft)
-            generator.impactOccurred(intensity: 1)
-            
             // Remove all pending notification requests
             let notificationService = NotificationService.shared
             notificationService.removeAllNotifications()
@@ -71,7 +68,7 @@ final class Goal {
             notificationService.unlock()
             
             if let currentPlanning {
-                notificationService.addAllNotifications(for: currentPlanning)
+                notificationService.updateAllNotifications(for: currentPlanning)
             }
             for reminder in reminders {
                 reminder.updateNotification(active: true)

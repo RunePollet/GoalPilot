@@ -56,6 +56,9 @@ struct JourneyTabView: View {
             }
             .toolbarVisibility(navigationModel.hideTabBar ? .hidden : .visible, for: .tabBar)
             .animation(.default, value: navigationModel.hideTabBar)
+            .sensoryFeedback(.impact(weight: .heavy), trigger: goal.achieved) { oldValue, newValue in
+                return newValue
+            }
             .overlay(alignment: .bottom) {
                 Landscape.TabBarBackgroundHill()
                     .ignoresSafeArea()
@@ -162,6 +165,9 @@ struct JourneyTabView: View {
                         .scaleEffect(value)
                 } animation: { value in
                     Animation.snappy(duration: 0.25)
+                }
+                .sensoryFeedback(.increase, trigger: streakModel.weeklyStreak) { oldValue, newValue in
+                    return oldValue < newValue
                 }
             }
             .buttonStyle(.plain)

@@ -28,7 +28,12 @@ struct PillarForm: View {
                     LabeledContent("Title", value: pillar.title)
                 }
                 NavigationLink(value: TextPropertyEditor<Pillar>.Model(root: pillar, keyPath: \.info.boundString, title: "Description", axis: .vertical)) {
-                    LabeledContent("Description", value: pillar.info ?? "")
+                    LabeledContent {
+                        Text(pillar.info ?? "")
+                            .lineLimit(nil)
+                    } label: {
+                        Text("Description")
+                    }
                 }
             }
             .labeledContentStyle(.plain)

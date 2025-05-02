@@ -35,7 +35,7 @@ struct PlanningEventSummary: View {
             if let activities, !activities.isEmpty {
                 Section("Activities") {
                     ForEach(activities) { activity in
-                        ActivityTile(activity: activity, canBeCompleted: showDoneButtons && !streakModel.completedActivities.contains(activity.persistentModelID)) {
+                        ActivityTile(activity: activity, canBeCompleted: showDoneButtons && !streakModel.completedActivities.contains(activity.persistentModelID), isEditing: navigationModel.isEditing) {
                             if let currentPlanning = plannerModel.currentPlanning {
                                 streakModel.enlistAsCompleted(activity: activity, currentPlanning: currentPlanning)
                             }

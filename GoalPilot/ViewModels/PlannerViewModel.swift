@@ -122,7 +122,7 @@ extension PlannerViewModel {
         currentPlanningID = newPlanning?.persistentModelID
         updateCurrentPlanning(modelContext)
         if let newPlanning {
-            notificationService.addAllNotifications(for: newPlanning)
+            notificationService.updateAllNotifications(for: newPlanning)
         }
     }
     
@@ -148,7 +148,10 @@ extension PlannerViewModel {
 // Standby mode
 extension PlannerViewModel {
     @MainActor
-    func enableStandbyMode(_ modelContext: ModelContext, disableCompletion: (() -> Void)? = nil) {
+    func enableStandbyMode(_ modelContext: ModelContext, streakModel: StreakViewModel, disableCompletion: (() -> Void)? = nil) {
+        // Freeze the weekly streak
+        streakModel.isStreakFreezed = true
+        
         // Remove all notifications
         let notificationService = NotificationService.shared
         notificationService.removeAllNotifications()
@@ -166,7 +169,7 @@ extension PlannerViewModel {
         notificationService.add(request: request) {
             WindowService.window()?.presentAlert(.disableStandbyMode({
                 Task {
-                    await self.disableStandbyMode(modelContext, completion: disableCompletion)
+                    await self.disableStandbyMode(modelContext, streakModel: streakModel, completion: disableCompletion)
                 }
             }))
         }
@@ -177,7 +180,10 @@ extension PlannerViewModel {
     }
     
     @MainActor
-    func disableStandbyMode(_ modelContext: ModelContext, completion: (() -> Void)? = nil) async {
+    func disableStandbyMode(_ modelContext: ModelContext, streakModel: StreakViewModel, completion: (() -> Void)? = nil) async {
+        // Unfreeze the weekly streak
+        streakModel.isStreakFreezed = false
+        
         // Unlock the notification service
         let notificationService = NotificationService.shared
         notificationService.unlock()
@@ -185,7 +191,7 @@ extension PlannerViewModel {
         // Restore all notifications
         updateCurrentPlanning(modelContext)
         if let currentPlanning {
-            notificationService.addAllNotifications(for: currentPlanning)
+            notificationService.updateAllNotifications(for: currentPlanning)
         }
         let reminders = try? modelContext.fetch(Reminder.descriptor())
         for reminder in reminders?.filter({ Date(timeIntervalSinceReferenceDate: $0.deadlineTimeIntervalSinceReferenceDate) > Date() }) ?? [] {

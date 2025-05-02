@@ -20,7 +20,7 @@ struct Question1View: View {
             onboardingModel.nextButton = .init(completion: {
                 // Show a message to the user
                 let alert = UIAlertController(title: "Great!", message: "Answer the following questions to continue. Take as much time as needed for each question, you can even do some research if you want. Your progress will be saved so you'll be able to continue at any time.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                alert.addAction(UIAlertAction(title: "Ok", style: .default))
                 WindowService.window()?.presentAlert(alert, canBeRepeated: false)
             })
         }
@@ -39,7 +39,7 @@ struct Question1View: View {
     
     func showMessage(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        alert.addAction(UIAlertAction(title: "Ok", style: .default))
         WindowService.window()?.presentAlert(alert, canBeRepeated: false)
     }
 }

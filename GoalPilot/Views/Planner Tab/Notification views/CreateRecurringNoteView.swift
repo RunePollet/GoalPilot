@@ -23,8 +23,6 @@ struct CreateRecurringNoteView: View {
             .navigationBarTitleDisplayMode(.inline)
             .modelInserter(model: recurringNote, delay: 0.5, insertCompletion: {
                 recurringNote.parent = parent
-            }, doneCompletion: {
-                recurringNote.updateNotification(active: parent == plannerModel.currentPlanning)
             })
     }
 }

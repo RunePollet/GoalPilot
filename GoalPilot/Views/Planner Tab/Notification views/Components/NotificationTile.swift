@@ -33,7 +33,7 @@ struct NotificationTile<T: NotificationRepresentable & PlanningEvent & Persisten
                     }
                 }
                 .foregroundStyle(colorScheme == .dark ? Color.black.opacity(0.6) : Color.secondary)
-                .opacity(isEditing ? 0 : 1)
+                .disabled(isEditing)
             }
         }
     }

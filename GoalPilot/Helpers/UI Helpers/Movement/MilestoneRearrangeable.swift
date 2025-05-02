@@ -15,15 +15,15 @@ struct MilestoneRearrangeableModifier: ViewModifier {
     @Binding var milestones: [Milestone]
     @Binding var dragItem: Milestone?
     
-    private let mediumImpactGenerator = UIImpactFeedbackGenerator(style: .medium)
-    private let softImpactGenerator = UIImpactFeedbackGenerator(style: .soft)
+    @State private var selectionFeedback = false
+    @State private var impactFeedback = false
     
     func body(content: Content) -> some View {
         content
+            .sensoryFeedback(.selection, trigger: selectionFeedback)
+            .sensoryFeedback(.impact, trigger: impactFeedback)
             .rearrange(onStarted: {
-                mediumImpactGenerator.impactOccurred()
-                softImpactGenerator.prepare()
-           
+                impactFeedback.toggle()
                 withAnimation(.smooth) {
                     self.dragItem = milestone
                 }
@@ -36,12 +36,10 @@ struct MilestoneRearrangeableModifier: ViewModifier {
                     
                     updateOrderIndices()
                     
-                    softImpactGenerator.impactOccurred()
-                    softImpactGenerator.prepare()
+                    selectionFeedback.toggle()
                 }
             }, onEnded: {
-                mediumImpactGenerator.impactOccurred()
-                
+                impactFeedback.toggle()
                 withAnimation(.smooth) {
                     self.dragItem = nil
                 }

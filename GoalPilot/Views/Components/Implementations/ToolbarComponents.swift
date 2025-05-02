@@ -81,6 +81,7 @@ struct EditToolbarItems: ToolbarContent {
                         .contentTransition(.symbolEffect(.replace))
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
                 }
+                .sensoryFeedback(.impact, trigger: isEditing)
             }
             
             // Add Button

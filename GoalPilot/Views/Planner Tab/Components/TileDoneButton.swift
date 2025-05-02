@@ -34,6 +34,9 @@ struct TileDoneButton: View {
                 .symbolVariant(isDone ? .square.fill : .square)
                 .animation(.default, value: isDone)
         }
+        .sensoryFeedback(.success, trigger: isDone) { oldValue, newValue in
+            return newValue
+        }
     }
 }
 

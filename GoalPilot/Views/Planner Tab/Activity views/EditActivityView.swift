@@ -23,7 +23,9 @@ struct EditActivityView: View {
             .interactiveDismissDisabled()
             .toolbar {
                 DoneToolbarItems(doneCompletion: {
-                    activity.updateNotification(active: activity.parent != nil ? activity.parent == plannerModel.currentPlanning : false)
+                    if !navigationModel.isCreating {
+                        activity.updateNotification(active: activity.parent != nil ? activity.parent == plannerModel.currentPlanning : false)
+                    }
                 })
             }
     }

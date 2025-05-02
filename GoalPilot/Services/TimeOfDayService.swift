@@ -25,7 +25,7 @@ class TimeOfDayService {
     /// Returns the current time of day.
     static func current() -> TimeOfDay {
         let hour = Calendar.current.component(.hour, from: Date())
-        let startMorning = 6
+        let startMorning = 7
         let startDay = 9
         let startEvening = 19
         let startNight = 24

@@ -12,6 +12,7 @@ struct NotAchieveAnymoreView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(PlannerViewModel.self) private var plannerModel
+    @Environment(StreakViewModel.self) private var streakModel
     
     @State private var showSecondaryIcon = false
     @State private var showStandbyDialog = false
@@ -59,7 +60,7 @@ struct NotAchieveAnymoreView: View {
     }
     
     func enableStandbyMode() {
-        plannerModel.enableStandbyMode(modelContext)
+        plannerModel.enableStandbyMode(modelContext, streakModel: streakModel)
         dismiss()
     }
 }

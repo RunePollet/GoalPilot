@@ -28,7 +28,12 @@ struct ActivityForm: View {
                         LabeledContent("Title", value: activity.subtitle)
                     }
                     NavigationLink(value: TextPropertyEditor<Activity>.Model(root: activity, keyPath: \.body, title: "Description", axis: .vertical)) {
-                        LabeledContent("Description", value: activity.body)
+                        LabeledContent {
+                            Text(activity.body)
+                                .lineLimit(nil)
+                        } label: {
+                            Text("Description")
+                        }
                     }
                     HStack {
                         ColorPicker("Color", selection: .init(get: { self.activity.color }, set: { self.activity.color = $0 }))

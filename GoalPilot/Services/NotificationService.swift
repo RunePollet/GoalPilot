@@ -79,17 +79,14 @@ class NotificationService: NSObject, Persistent {
     }
     
     @MainActor
-    func addAllNotifications(for planning: Planning) {
+    func updateAllNotifications(for planning: Planning) {
         if !locked {
-            let activities = planning.activities.filter(\.isEnabled)
-            let recurringNotes = planning.recurringNotes.filter(\.isEnabled)
-            
-            for activity in activities {
-                add(request: activity.getRequest())
+            for activity in planning.activities {
+                activity.updateNotification(active: true)
             }
             
-            for recurringNote in recurringNotes {
-                add(request: recurringNote.getRequest())
+            for recurringNote in planning.recurringNotes {
+                recurringNote.updateNotification(active: true)
             }
         }
     }

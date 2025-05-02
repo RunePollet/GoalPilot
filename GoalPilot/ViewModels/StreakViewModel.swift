@@ -14,6 +14,7 @@ class StreakViewModel: Persistent, Codable {
     
     // Streak
     var weeklyStreak = 0
+    var isStreakFreezed = false
     var completedActivities: [PersistentIdentifier] = []
     
     private var incrementedStreak: Bool = false
@@ -29,9 +30,9 @@ class StreakViewModel: Persistent, Codable {
     ]
     
     // Accessibility
-    private var globalModel: GlobalViewModel
     @MainActor
     private var notificationService = NotificationService.shared
+    private var globalModel: GlobalViewModel
     
     init(globalModel: GlobalViewModel) {
         self.globalModel = globalModel
@@ -65,6 +66,7 @@ class StreakViewModel: Persistent, Codable {
             let decodedModel = try JSONDecoder().decode(StreakViewModel.self, from: data)
             
             weeklyStreak = decodedModel.weeklyStreak
+            isStreakFreezed = decodedModel.isStreakFreezed
             completedActivities = decodedModel.completedActivities
             incrementedStreak = decodedModel.incrementedStreak
             lastRefresh = decodedModel.lastRefresh
@@ -76,6 +78,7 @@ class StreakViewModel: Persistent, Codable {
     // Codable
     enum CodingKeys: String, CodingKey {
         case weeklyStreak
+        case isStreakFreezed
         case completedActivities
         case incrementedStreak
         case lastRefresh
@@ -84,6 +87,7 @@ class StreakViewModel: Persistent, Codable {
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         weeklyStreak = try container.decode(Int.self, forKey: .weeklyStreak)
+        isStreakFreezed = try container.decode(Bool.self, forKey: .isStreakFreezed)
         completedActivities = try container.decode([PersistentIdentifier].self, forKey: .completedActivities)
         incrementedStreak = try container.decode(Bool.self, forKey: .incrementedStreak)
         lastRefresh = try container.decode(Date?.self, forKey: .lastRefresh)
@@ -93,6 +97,7 @@ class StreakViewModel: Persistent, Codable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(weeklyStreak, forKey: .weeklyStreak)
+        try container.encode(isStreakFreezed, forKey: .isStreakFreezed)
         try container.encode(completedActivities, forKey: .completedActivities)
         try container.encode(incrementedStreak, forKey: .incrementedStreak)
         try container.encode(lastRefresh, forKey: .lastRefresh)
@@ -102,8 +107,10 @@ class StreakViewModel: Persistent, Codable {
 // Weekly streak support
 extension StreakViewModel {
     func resetStreak() {
-        weeklyStreak = 0
-        incrementedStreak = false
+        if !isStreakFreezed {
+            weeklyStreak = 0
+            incrementedStreak = false
+        }
     }
     
     func resetWeek() {
@@ -138,7 +145,6 @@ extension StreakViewModel {
             if currentPlanning.activities.count > completedActivities.count {
                 resetStreak()
             }
-            
             completedActivities = []
             incrementedStreak = false
         }
@@ -156,7 +162,7 @@ extension StreakViewModel {
         }
         
         // Check if all activities are completed
-        if currentPlanning.activities.count == completedActivities.count {
+        if currentPlanning.activities.count == completedActivities.count && completedActivities.count != 0 {
             let calendar = Calendar.current
             let hour = calendar.component(.hour, from: .now)
             let weekday = calendar.component(.weekday, from: .now)
@@ -183,7 +189,6 @@ extension StreakViewModel {
         globalModel.presentStarPowerup(fadeIn: fadeIn, pretitles: isFirst ? titles : [], targetAnchor: animationTargetAnchor, hideCompletion: {
             // Increment the streak
             self.animateStreakCounterTrigger.toggle()
-            UINotificationFeedbackGenerator().notificationOccurred(.success)
             withAnimation(.smooth) {
                 if isFirst {
                     self.weeklyStreak += 1

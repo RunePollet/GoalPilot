@@ -21,8 +21,8 @@ struct DayPicker: View {
     @State private var scrollPosition: ScrollPosition = .init(idType: String.self)
     @State private var timeSinceLastUpdate: Date?
     @State private var snappingEnabled: Bool = true
+    @State private var selectionFeedback = false
     
-    private let impactGenerator = UIImpactFeedbackGenerator(style: .medium)
     private let screenWidth: CGFloat = { WindowService.screenSize().width }()
     private var contentMargin: CGFloat { 0.5*screenWidth-itemWidth/2 }
     private let itemWidth: CGFloat = 50
@@ -52,6 +52,7 @@ struct DayPicker: View {
         }
         .frame(height: monthPickerSize.height)
         .clipped()
+        .sensoryFeedback(.selection, trigger: selectionFeedback)
     }
     
     private var daysScrollView: some View {
@@ -69,6 +70,7 @@ struct DayPicker: View {
                                 scrollPosition.scrollTo(id: date.dayID, anchor: .center)
                             }
                             plannerModel.currentDate = date
+                            selectionFeedback.toggle()
                         }
                 }
             }
@@ -78,6 +80,7 @@ struct DayPicker: View {
             if let date = Date.getFromDayID(id as? String ?? "") {
                 // Select the date
                 plannerModel.currentDate = date
+                selectionFeedback.toggle()
             }
         }
         .scrollIndicators(.hidden)

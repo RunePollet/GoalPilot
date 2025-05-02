@@ -23,7 +23,6 @@ struct CreateActivityView: View {
             .modelInserter(model: activity, delay: 0.5, insertCompletion: {
                 activity.parent = parent
             }, doneCompletion: {
-                activity.updateNotification(active: parent == plannerModel.currentPlanning)
                 if let currentPlanning = plannerModel.currentPlanning {
                     streakModel.checkStreakIncreaser(currentPlanning: currentPlanning)
                 }

@@ -36,7 +36,7 @@ struct LargeDateCell: View {
                 
                 // Activities and notifications
                 ForEach(Array(events.enumerated()), id: \.offset) { (i, event) in
-                    let maxEventRows = 4
+                    let maxEventRows = 3
                     
                     if i <= maxEventRows-1 {
                         eventRow(event: event)

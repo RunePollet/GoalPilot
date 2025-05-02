@@ -6,6 +6,7 @@
 //
 //
 
+import Foundation
 import SwiftData
 
 @Model
@@ -82,5 +83,12 @@ final class Planning: Persistentable {
     
     
     // MARK: Persistentable
+    func preDeletion(_ modelContext: ModelContext) {
+        let ids = self.activities.map(\.id.uuidString) + self.recurringNotes.map(\.id.uuidString)
+        DispatchQueue.main.async {
+            NotificationService.shared.removeNotifications(with: ids)
+        }
+    }
+    
     var isConfigured: Bool { !title.isEmpty && parent != nil }
 }

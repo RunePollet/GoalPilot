@@ -36,7 +36,12 @@ struct NotificationForm<T: NotificationRepresentable & PlanningEvent & Persisten
                     LabeledContent("Title", value: wrapper.model.subtitle)
                 }
                 NavigationLink(value: TextPropertyEditor<ObservableModel<T>>.Model(root: wrapper, keyPath: \.model.body, title: "Title", axis: .vertical)) {
-                    LabeledContent("Description", value: wrapper.model.body)
+                    LabeledContent {
+                        Text(wrapper.model.body)
+                            .lineLimit(nil)
+                    } label: {
+                        Text("Description")
+                    }
                 }
                 HStack {
                     // Color Picker

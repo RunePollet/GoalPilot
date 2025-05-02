@@ -32,7 +32,13 @@ struct MilestoneForm: View {
                     LabeledContent("Title", value: milestone.title)
                 }
                 SmartNavigationLink(isActive: isEditing || isCreating, value: TextPropertyEditor<Milestone>.Model(root: milestone, keyPath: \.info.boundString, title: "Description", axis: .vertical)) {
-                    LabeledContent("Description", value: milestone.info.boundString)
+                    LabeledContent {
+                        Text(milestone.info.boundString)
+                            .lineLimit(nil)
+                    } label: {
+                        Text("Description")
+                    }
+
                 }
             }
             .labeledContentStyle(.plain)

@@ -39,31 +39,31 @@ extension UIAlertController {
     /// Describes an error when the app failed to fetch essential data.
     static let essentialDataError: UIAlertController = {
         var alert = UIAlertController(title: "Error", message: "An error occurred trying to load essential data. Please restart the app to try again.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Ok", style: .cancel))
         return alert
     }()
     
     /// Tells the user that the goal isn't fully configured.
     static let goalNotConfigured: UIAlertController = {
         var alert = UIAlertController(title: "Oops", message: "Your goal isn't fully configured, please specify all required information.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        alert.addAction(UIAlertAction(title: "Ok", style: .default))
         return alert
     }()
     
     static let duplicateTitle: UIAlertController = {
         let alert = UIAlertController(title: "Duplicate Title", message: "Please use another title.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        alert.addAction(UIAlertAction(title: "Ok", style: .default))
         return alert
     }()
     
     static let standbyModeEnabled: UIAlertController = {
-        let alert = UIAlertController(title: "Standby mode enabled", message: "All notifications are disabled for 3 weeks, by then you'll receive an encouraging notification to revise your decision.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        let alert = UIAlertController(title: "Standby mode enabled", message: "Your weekly streak is freezed and all notifications are disabled for 3 weeks, by then you'll receive an encouraging notification to revise your decision.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default))
         return alert
     }()
     
     static func disableStandbyMode(_ continueCompletion: @escaping () -> Void) -> UIAlertController {
-        let alert = UIAlertController(title: "Disable standby mode", message: "Are you reade to disable standby mode?", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Disable standby mode", message: "Are you ready to disable standby mode?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { _ in
             continueCompletion()
         }))

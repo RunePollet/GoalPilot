@@ -11,6 +11,10 @@ import SwiftUI
 struct StarPowerupView: View {
     var handler: StarPowerupHandler
     
+    // Impact feedback
+    @State private var rigidFeedback = false
+    @State private var successFeedback = false
+    
     var body: some View {
         ZStack {
             mainStarShadow
@@ -21,8 +25,7 @@ struct StarPowerupView: View {
             } color: { date in
                 return handler.getColor(date: date)
             } killCompletion: {
-                let impact = UIImpactFeedbackGenerator(style: .soft)
-                impact.impactOccurred()
+                UIImpactFeedbackGenerator(style: .soft).impactOccurred()
             }
             
             if handler.showPressingIndicator {
@@ -53,6 +56,8 @@ struct StarPowerupView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .sensoryFeedback(.impact(flexibility: .rigid), trigger: rigidFeedback)
+        .sensoryFeedback(.success, trigger: successFeedback)
         .ignoresSafeArea()
     }
     
@@ -137,19 +142,15 @@ struct StarPowerupView: View {
             .scaleEffect(handler.mainStarScale)
             .onChange(of: handler.mainStarPop) {
                 // Pop feedback
-                let impact = UINotificationFeedbackGenerator()
-                impact.notificationOccurred(.success)
+                successFeedback.toggle()
                 
                 // Wink feedback
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    let generator = UIImpactFeedbackGenerator(style: .rigid)
-                    generator.prepare()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
-                        generator.impactOccurred()
-                        generator.prepare()
+                        rigidFeedback.toggle()
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.44) {
-                        generator.impactOccurred()
+                        rigidFeedback.toggle()
                     }
                 }
             }

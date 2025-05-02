@@ -13,6 +13,7 @@ struct ActivityTile: View {
     
     var activity: Activity
     var canBeCompleted: Bool
+    var isEditing: Bool
     var completeAction: (() -> Void)? = nil
     
     @State private var showDoneButton: Bool = true
@@ -40,6 +41,7 @@ struct ActivityTile: View {
                     completeAction?()
                 }
                 .foregroundStyle(colorScheme == .dark ? Color.black.opacity(0.6) : Color.secondary)
+                .disabled(isEditing)
             }
         }
         .animation(.easeInOut, value: showDoneButton)

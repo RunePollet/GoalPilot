@@ -21,14 +21,15 @@ class TextService: Persistent {
         ["Excellent job this week!", "Great work this week!", "You’ve nailed it this week \(username)."]
     }
     var greetingBasedOnTimeOfDay: String {
-        let hour = Calendar.current.component(.hour, from: Date())
-        if hour >= 6 && hour < 12 {
+        let timeOfDay = TimeOfDayService.current()
+        switch timeOfDay {
+        case .sunrise:
             return "Good morning, \(username)"
-        } else if hour >= 12 && hour < 18 {
+        case .day:
             return "Good afternoon, \(username)"
-        } else if hour >= 18 && hour < 24 {
+        case .sunset:
             return "Good evening, \(username)"
-        } else {
+        case .night:
             return "Good night, \(username)"
         }
     }

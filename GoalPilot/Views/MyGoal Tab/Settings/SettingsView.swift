@@ -13,6 +13,7 @@ struct SettingsView: View {
     @Environment(Goal.self) private var goal
     @Environment(GlobalViewModel.self) private var globalModel
     @Environment(PlannerViewModel.self) private var plannerModel
+    @Environment(StreakViewModel.self) private var streakModel
     @Environment(NavigationViewModel.self) private var navigationModel
     
     enum Destination {
@@ -85,13 +86,14 @@ struct SettingsView: View {
         }
         .onChange(of: enableStandby) { oldValue, newValue in
             if newValue {
-                plannerModel.enableStandbyMode(modelContext) {
+                plannerModel.enableStandbyMode(modelContext, streakModel: streakModel) {
                     // Disable completion
                     enableStandby = false
                 }
             } else {
                 Task {
-                    await plannerModel.disableStandbyMode(modelContext)
+                    await plannerModel.disableStandbyMode(modelContext, streakModel: streakModel)
+                    streakModel.isStreakFreezed = false
                 }
             }
         }

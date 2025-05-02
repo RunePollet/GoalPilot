@@ -76,6 +76,7 @@ struct MilestoneDetailView: View {
                 }
             }
         }
+        .sensoryFeedback(.impact, trigger: highlightDoneButton)
         .alert("Previous milestones not achieved", isPresented: $showPreviousNotAchievedAlert) {
             Button("Cancel", role: .cancel) {}
             Button("Continue") {

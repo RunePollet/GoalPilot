@@ -24,6 +24,7 @@ struct SelectAppIconView: View {
             }
         }
         .navigationTitle("App Icon")
+        .sensoryFeedback(.selection, trigger: globalModel.selectedAppIcon)
     }
     
     private func appIconButton(_ appIcon: AppIcon) -> some View {

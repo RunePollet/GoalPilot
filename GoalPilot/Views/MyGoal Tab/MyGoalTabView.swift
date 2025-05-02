@@ -38,6 +38,7 @@ struct MyGoalTabView: View {
                 if goal.achieved {
                     newGoalButton
                         .plain()
+                        .zIndex(1)
                 }
                 
                 if currentContent == .goal {

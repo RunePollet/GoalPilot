@@ -9,5 +9,6 @@ import Foundation
 
 /// An object that can duplicate itself and its values.
 protocol Duplicatable {
+    /// Duplicates this object and its values.
     func duplicate() -> Self
 }

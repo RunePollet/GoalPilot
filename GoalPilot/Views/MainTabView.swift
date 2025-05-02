@@ -94,7 +94,7 @@ struct MainTabView: View {
             CreatePlanningView(parent: milestone)
         }
         .alert("Creating a planning", isPresented: $globalModel.includeAlert) {
-            Button("OK") {}
+            Button("Ok") {}
         } message: {
             Text("Let's create a weekly planning to achieve your first milestone. First, give it a name and a description if you want, then you can add the activities you want to do to achieve your first milestone.")
         }

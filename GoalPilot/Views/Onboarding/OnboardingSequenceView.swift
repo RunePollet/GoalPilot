@@ -15,7 +15,9 @@ struct OnboardingSequenceView: View {
     @State private var showSheet = false
     @State private var starProgress: CGFloat = 0
     @State private var winkTrigger = false
-    private let softImpactGenerator = UIImpactFeedbackGenerator(style: .soft)
+    
+    // Impact feedback
+    @State private var rigidFeedback = false
     
     var body: some View {
         NavigationStack {
@@ -273,15 +275,13 @@ extension OnboardingSequenceView {
                             } keyframes: { value in
                                 StarFigure.StarView.winkKeyframes(value)
                             }
+                            .sensoryFeedback(.impact(flexibility: .rigid), trigger: rigidFeedback)
                             .onChange(of: winkTrigger) {
-                                let generator = UIImpactFeedbackGenerator(style: .rigid)
-                                generator.prepare()
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
-                                    generator.impactOccurred()
-                                    generator.prepare()
+                                    rigidFeedback.toggle()
                                 }
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.44) {
-                                    generator.impactOccurred()
+                                    rigidFeedback.toggle()
                                 }
                             }
                         StarFigure.StarShape()
@@ -307,7 +307,7 @@ extension OnboardingSequenceView {
         .onChange(of: onboardingModel.currentView, initial: true) { oldValue, newValue in
             if newValue == .reward && oldValue == .question6 {
                 // Let the star grow and wink
-                softImpactGenerator.impactOccurred()
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 withAnimation(.easeInOut(duration: 1)) {
                     starProgress = 1
                 } completion: {

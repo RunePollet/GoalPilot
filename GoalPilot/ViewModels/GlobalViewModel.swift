@@ -62,7 +62,6 @@ extension GlobalViewModel {
         UIApplication.shared.setAlternateIconName(appIcon.iconName)
         UserDefaults.standard.set(appIcon.iconName, forKey: Keys.appIconKey)
         selectedAppIcon = appIcon
-        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
     }
 }
 

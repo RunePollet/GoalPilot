@@ -134,6 +134,8 @@ struct MAAnimationView: View {
                     .zIndex(5)
             }
         }
+        .sensoryFeedback(.success, trigger: handler.successFeedback)
+        .sensoryFeedback(.error, trigger: handler.errorFeedback)
         .environment(handler)
         .onPreferenceChange(Landscape.StarIndicatorBounds.self) { values in
             DispatchQueue.main.async {

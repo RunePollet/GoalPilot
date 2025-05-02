@@ -12,6 +12,7 @@ struct OtherView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(PlannerViewModel.self) private var plannerModel
+    @Environment(StreakViewModel.self) private var streakModel
     
     @State private var showSecondaryIcon = false
     
@@ -46,7 +47,7 @@ struct OtherView: View {
     }
     
     func enableStandbyMode() {
-        plannerModel.enableStandbyMode(modelContext)
+        plannerModel.enableStandbyMode(modelContext, streakModel: streakModel)
         dismiss()
     }
 }
