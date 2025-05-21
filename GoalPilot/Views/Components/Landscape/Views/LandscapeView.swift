@@ -10,6 +10,8 @@ import SwiftUI
 extension Landscape {
     /// The main landscape view.
     struct LandscapeView: View {
+        @Environment(TimeOfDayViewModel.self) private var timeOfDayModel
+        
         var stars: [StarConfiguration]
         var focusedStar: StarConfiguration?
         var glow: Bool
@@ -17,7 +19,6 @@ extension Landscape {
         var pathwayStyles: [[PathwayView.Style]]
         
         static let goalStarID = "GOAL_STAR"
-        private var currentTimeOfDay: TimeOfDayService.TimeOfDay { TimeOfDayService.current() }
         
         init(stars: [StarConfiguration], focusedStar: StarConfiguration?, glow: Bool = false, goalStarGlow: Bool = false) {
             self.stars = stars
@@ -65,13 +66,13 @@ extension Landscape {
                 }
                 .frame(width: size.width, height: size.height)
                 .frame(maxHeight: .infinity, alignment: .bottom)
-                .preferredColorScheme(currentTimeOfDay.preferredColorScheme)
+                .preferredColorScheme(timeOfDayModel.currentTimeOfDay.preferredColorScheme)
             }
         }
         
         @ViewBuilder
         private var wheather: some View {
-            switch currentTimeOfDay {
+            switch timeOfDayModel.currentTimeOfDay {
             case .sunrise:
                 Sunrise()
             case .day:
@@ -88,11 +89,11 @@ extension Landscape {
                 // Sea
                 Group {
                     Color(AssetsCatalog.seaColorID)
-                    if currentTimeOfDay == .sunset || currentTimeOfDay == .sunrise {
+                    if timeOfDayModel.currentTimeOfDay == .sunset || timeOfDayModel.currentTimeOfDay == .sunrise {
                         LinearGradient(
                             stops: [
                                 .init(color: .clear, location: 0),
-                                .init(color: .orange.opacity(currentTimeOfDay == .sunset ? 0.4 : 0.3), location: 0.51),
+                                .init(color: .orange.opacity(timeOfDayModel.currentTimeOfDay == .sunset ? 0.4 : 0.3), location: 0.51),
                                 .init(color: .clear, location: 1)
                             ],
                             startPoint: .init(x: 0.1, y: 1),

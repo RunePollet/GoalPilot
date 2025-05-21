@@ -146,8 +146,8 @@ extension PlannerViewModel {
 }
 
 // Standby mode
+@MainActor
 extension PlannerViewModel {
-    @MainActor
     func enableStandbyMode(_ modelContext: ModelContext, streakModel: StreakViewModel, disableCompletion: (() -> Void)? = nil) {
         // Freeze the weekly streak
         streakModel.isStreakFreezed = true
@@ -157,31 +157,18 @@ extension PlannerViewModel {
         notificationService.removeAllNotifications()
         
         // Add notification in 3 weeks
-        let content = UNMutableNotificationContent()
-        content.title = "Standby mode"
-        content.body = "How are you doing?"
-        
-        let triggerDate = Calendar.current.date(byAdding: .weekOfYear, value: 3, to: .now)!
-        let components = Calendar.current.dateComponents(in: .current, from: triggerDate)
-        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
-        
-        let request = UNNotificationRequest(identifier: Keys.standbyNotification, content: content, trigger: trigger)
-        notificationService.add(request: request) {
-            WindowService.window()?.presentAlert(.disableStandbyMode({
-                Task {
-                    await self.disableStandbyMode(modelContext, streakModel: streakModel, completion: disableCompletion)
-                }
-            }))
-        }
+        addStandbyNotification(modelContext, streakModel: streakModel, disableCompletion: disableCompletion)
         
         // Notify the user and unlock the notification service
         WindowService.window()?.presentAlert(.standbyModeEnabled)
         notificationService.lock()
     }
     
-    @MainActor
     func disableStandbyMode(_ modelContext: ModelContext, streakModel: StreakViewModel, completion: (() -> Void)? = nil) async {
         // Unfreeze the weekly streak
+        if let currentPlanning {
+            streakModel.refresh(currentPlanning: currentPlanning)
+        }
         streakModel.isStreakFreezed = false
         
         // Unlock the notification service
@@ -202,6 +189,27 @@ extension PlannerViewModel {
         notificationService.removeNotifications(with: [Keys.standbyNotification])
         
         completion?()
+    }
+    
+    private func addStandbyNotification(_ modelContext: ModelContext, streakModel: StreakViewModel, disableCompletion: (() -> Void)?) {
+        let content = UNMutableNotificationContent()
+        content.title = "Standby mode"
+        content.body = "How are you doing?"
+        
+        let triggerDate = Calendar.current.date(byAdding: .second, value: 10, to: .now)!
+        let components = Calendar.current.dateComponents(in: .current, from: triggerDate)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+        
+        let request = UNNotificationRequest(identifier: Keys.standbyNotification, content: content, trigger: trigger)
+        NotificationService.shared.add(request: request) {
+            WindowService.window()?.presentAlert(.disableStandbyMode(continueCompletion: {
+                Task {
+                    await self.disableStandbyMode(modelContext, streakModel: streakModel, completion: disableCompletion)
+                }
+            }, cancelCompletion: {
+                self.addStandbyNotification(modelContext, streakModel: streakModel, disableCompletion: disableCompletion)
+            }))
+        }
     }
 }
 

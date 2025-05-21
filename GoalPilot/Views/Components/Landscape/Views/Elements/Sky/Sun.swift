@@ -9,6 +9,8 @@ import SwiftUI
 
 extension Landscape {
     struct Sun: View {
+        @Environment(TimeOfDayViewModel.self) private var timeOfDayModel
+        
         var lineWidth: CGFloat = 15/39
         var color: Color = .yellow
         
@@ -20,7 +22,7 @@ extension Landscape {
                     Circle()
                         .foregroundStyle(color)
                 }
-                .shadow(color: TimeOfDayService.current() == .day ? .white.opacity(0.6) : .clear, radius: 20)
+                .shadow(color: timeOfDayModel.currentTimeOfDay == .day ? .white.opacity(0.6) : .clear, radius: 20)
             }
         }
     }

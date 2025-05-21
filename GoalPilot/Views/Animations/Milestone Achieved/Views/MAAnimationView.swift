@@ -10,6 +10,8 @@ import SwiftData
 
 /// An animation appropriate for when the user achieved a milestone.
 struct MAAnimationView: View {
+    @Environment(TimeOfDayViewModel.self) private var timeOfDayModel
+    
     var handler: MAAnimationHandler
     
     @State private var indicatorAnchor: Anchor<CGRect>?
@@ -33,7 +35,7 @@ struct MAAnimationView: View {
             if handler.sky {
                 Group {
                     Color(uiColor: .systemBackground)
-                    Landscape.SkyGradient(timeOfDay: TimeOfDayService.current(), stop: 0.5)
+                    Landscape.SkyGradient(timeOfDay: timeOfDayModel.currentTimeOfDay, stop: 0.5)
                 }
                 .ignoresSafeArea()
                 .zIndex(1)

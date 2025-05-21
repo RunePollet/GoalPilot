@@ -154,7 +154,7 @@ extension OnboardingViewModel {
             nextButton = nil
             secondaryButton = nil
         } completion: {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
                 withAnimation(.easeInOut(duration: 0.8).delay(self.currentView == .reward && transitionForward ? 0.8 : 0)) {
                     self.bottomBarSetter?()
                 }

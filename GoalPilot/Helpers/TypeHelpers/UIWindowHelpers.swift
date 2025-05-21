@@ -62,12 +62,14 @@ extension UIAlertController {
         return alert
     }()
     
-    static func disableStandbyMode(_ continueCompletion: @escaping () -> Void) -> UIAlertController {
+    static func disableStandbyMode(continueCompletion: @escaping () -> Void, cancelCompletion: @escaping () -> Void) -> UIAlertController {
         let alert = UIAlertController(title: "Disable standby mode", message: "Are you ready to disable standby mode?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { _ in
             continueCompletion()
         }))
-        alert.addAction(UIAlertAction(title: "No", style: .cancel))
+        alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: { _ in
+            cancelCompletion()
+        }))
         return alert
     }
     

@@ -15,6 +15,7 @@ struct JourneyTabView: View {
     @Environment(GlobalViewModel.self) private var globalModel
     @Environment(StreakViewModel.self) private var streakModel
     @Environment(PlannerViewModel.self) private var plannerModel
+    @Environment(TimeOfDayViewModel.self) private var timeOfDayModel
     
     // Navigation
     @State private var navigationModel = NavigationViewModel()
@@ -48,7 +49,7 @@ struct JourneyTabView: View {
                 }
                 .fixedSize(horizontal: false, vertical: true)
                 .background {
-                    Landscape.SkyGradient(timeOfDay: TimeOfDayService.current(), stop: 0.2)
+                    Landscape.SkyGradient(timeOfDay: timeOfDayModel.currentTimeOfDay, stop: 0.2)
                         .ignoresSafeArea()
                 }
                 
@@ -81,6 +82,9 @@ struct JourneyTabView: View {
             .onAppear {
                 navigationModel.isEditing = false
                 plannerModel.updateCurrentPlanning(modelContext)
+            }
+            .task {
+                await timeOfDayModel.updateTimeOfDay()
             }
         }
         .environment(navigationModel)

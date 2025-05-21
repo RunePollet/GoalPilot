@@ -74,9 +74,16 @@ struct SettingsView: View {
                 Text("Standby mode")
                     .foregroundStyle(Color.secondary)
             } footer: {
-                Text("If you turn on standby mode, you won’t get any notifications for 3 weeks. After 3 weeks you’ll get an encouraging notification.")
+                Text("If you turn on standby mode, you're weekly streak will be freezed and you won’t get any notifications for 3 weeks. After 3 weeks you’ll get an encouraging notification.")
                     .foregroundStyle(Color.secondary)
             }
+            
+            // Website Links
+            Section {
+                Link("Give feedback", destination: URL(string: "https://goalpilot.be/feedback/")!)
+                Link("Share your dream", destination: URL(string: "https://goalpilot.be/whats-your-dream/")!)
+            }
+            .foregroundStyle(Color.accentColor)
         }
         .foregroundStyle(.primary, Color.accentColor)
         .navigationTitle("Settings")

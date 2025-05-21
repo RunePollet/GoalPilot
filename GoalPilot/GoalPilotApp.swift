@@ -55,6 +55,7 @@ struct GoalPilotApp: App {
     let onboardingModel = OnboardingViewModel()
     let plannerModel: PlannerViewModel
     let streakModel: StreakViewModel
+    let timeOfDayModel = TimeOfDayViewModel()
 
     init() {
         // Set styling settings for the app
@@ -89,6 +90,7 @@ struct GoalPilotApp: App {
         .environment(onboardingModel)
         .environment(plannerModel)
         .environment(streakModel)
+        .environment(timeOfDayModel)
         .environment(goal)
         .modelContainer(modelContainer)
     }

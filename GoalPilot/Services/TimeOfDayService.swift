@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import CoreLocation
+import WeatherKit
 
 /// Service that indicates the current time of day.
 class TimeOfDayService {
@@ -23,20 +25,21 @@ class TimeOfDayService {
     }
     
     /// Returns the current time of day.
-    static func current() -> TimeOfDay {
-        let hour = Calendar.current.component(.hour, from: Date())
-        let startMorning = 7
-        let startDay = 9
-        let startEvening = 19
-        let startNight = 24
-        if hour >= startMorning && hour < startDay {
-            return .sunrise
-        } else if hour >= startDay && hour < startEvening {
-            return .day
-        } else if hour >= startEvening && hour < startNight {
-            return .sunset
-        } else {
-            return .night
-        }
-    }
+//    static func current() -> TimeOfDay {
+//        let hour = Calendar.current.component(.hour, from: Date())
+//        let startMorning = 7
+//        let startDay = 9
+//        let startEvening = 19
+//        let startNight = 24
+//        if hour >= startMorning && hour < startDay {
+//            return .sunrise
+//        } else if hour >= startDay && hour < startEvening {
+//            return .day
+//        } else if hour >= startEvening && hour < startNight {
+//            return .sunset
+//        } else {
+//            return .night
+//        }
+//    }
 }
+

@@ -11,7 +11,7 @@ extension Landscape {
     /// A gradient representing the sky at the given time of day.
     struct SkyGradient: View {
         
-        var timeOfDay: TimeOfDayService.TimeOfDay
+        var timeOfDay: TimeOfDayViewModel.TimeOfDay
         var stop: CGFloat = 0
         
         private var topColor: Color {
