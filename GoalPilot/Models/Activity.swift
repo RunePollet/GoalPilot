@@ -122,15 +122,15 @@ final class Activity: RecurringPlanningEvent, NotificationRepresentable, Persist
     static func eventDescriptor(planning: Planning?, weekday: Int? = nil) -> FetchDescriptor<Activity> {
         guard let planning else { return .empty }
         
-        let planningId = planning.persistentModelID
+        let planningId = planning.id
         var predicate: Predicate<Activity> {
             if let weekday {
                 return #Predicate<Activity> {
-                    $0._parent?.persistentModelID == planningId && $0.weekday == weekday && !$0.isDeleted
+                    $0._parent?.id == planningId && $0.weekday == weekday && !$0.isDeleted
                 }
             } else {
                 return #Predicate<Activity> {
-                    $0._parent?.persistentModelID == planningId && !$0.isDeleted
+                    $0._parent?.id == planningId && !$0.isDeleted
                 }
             }
         }

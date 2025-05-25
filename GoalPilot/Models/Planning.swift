@@ -11,7 +11,8 @@ import SwiftData
 
 @Model
 final class Planning: Persistentable {
-    var title: String 
+    var id: UUID
+    var title: String
     var info: String?
     var isDeleted: Bool
     
@@ -36,6 +37,7 @@ final class Planning: Persistentable {
     }
     
     init(title: String, info: String? = nil) {
+        self.id = UUID()
         self.title = title
         self.info = info
         self.isDeleted = false

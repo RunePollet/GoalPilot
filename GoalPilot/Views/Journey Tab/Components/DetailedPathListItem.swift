@@ -41,7 +41,7 @@ struct DetailedPathListItem: View {
             
             // Current event
             ForEach(currentActivities) { activity in
-                ActivityRow(activity: activity, minimalist: false, canBeCompleted: !streakModel.completedActivities.contains(activity.persistentModelID)) {
+                ActivityRow(activity: activity, minimalist: false, canBeCompleted: !streakModel.completedActivities.contains(activity.id)) {
                     activityDoneAction(activity)
                 }
             }

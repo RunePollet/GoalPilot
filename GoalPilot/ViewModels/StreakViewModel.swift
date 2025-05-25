@@ -15,7 +15,7 @@ class StreakViewModel: Persistent, Codable {
     // Streak
     var weeklyStreak = 0
     var isStreakFreezed = false
-    var completedActivities: [PersistentIdentifier] = []
+    var completedActivities: [UUID] = []
     
     private var incrementedStreak: Bool = false
     private var lastRefresh: Date?
@@ -88,7 +88,7 @@ class StreakViewModel: Persistent, Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         weeklyStreak = try container.decode(Int.self, forKey: .weeklyStreak)
         isStreakFreezed = try container.decode(Bool.self, forKey: .isStreakFreezed)
-        completedActivities = try container.decode([PersistentIdentifier].self, forKey: .completedActivities)
+        completedActivities = try container.decode([UUID].self, forKey: .completedActivities)
         incrementedStreak = try container.decode(Bool.self, forKey: .incrementedStreak)
         lastRefresh = try container.decode(Date?.self, forKey: .lastRefresh)
         globalModel = .init()
@@ -121,7 +121,7 @@ extension StreakViewModel {
     /// Enlists an activity as completed and schedules or removes the streak update notification, or presents the streak updater if appropriate.
     @MainActor
     func enlistAsCompleted(activity: Activity, currentPlanning: Planning) {
-        completedActivities.append(activity.persistentModelID)
+        completedActivities.append(activity.id)
         checkStreakIncreaser(currentPlanning: currentPlanning)
     }
     

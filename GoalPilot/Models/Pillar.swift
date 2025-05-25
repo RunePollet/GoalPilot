@@ -11,6 +11,7 @@ import SwiftData
 
 @Model
 final class Pillar: Persistentable {
+    var id: UUID
     var creationDate: Date
     var title: String
     var info: String?
@@ -26,6 +27,7 @@ final class Pillar: Persistentable {
     }
     
     init() {
+        self.id = UUID()
         self.creationDate = Date()
         self.title = ""
         self.icon = "flag.square"

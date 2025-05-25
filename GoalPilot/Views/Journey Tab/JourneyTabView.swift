@@ -32,7 +32,7 @@ struct JourneyTabView: View {
     
     // View coordination
     nonisolated static let streakCounterBoundsKey = "STREAK_COUNTER_BOUNDS"
-    @State private var scrollPosition: PersistentIdentifier?
+    @State private var scrollPosition: UUID?
     private var landscapeStars: [Landscape.LandscapeView.StarConfiguration] {
         Landscape.LandscapeView.getLandscapeStars(nextStarToReach: nextToAchieve?.asStarConfiguration, totalStars: milestones.reversed().map(\.asStarConfiguration))
     }
@@ -115,7 +115,7 @@ struct JourneyTabView: View {
                             }
                         }
                     }
-                    .id(milestone.persistentModelID)
+                    .id(milestone.id)
                 }
             }
             .scrollTargetLayout()
@@ -130,7 +130,7 @@ struct JourneyTabView: View {
         }
         .onAppear {
             DispatchQueue.main.async {
-                scrollPosition = currentPlanning?.parent?.persistentModelID
+                scrollPosition = currentPlanning?.parent?.id
             }
         }
     }

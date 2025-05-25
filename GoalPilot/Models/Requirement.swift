@@ -11,6 +11,7 @@ import SwiftData
 
 @Model
 final class Requirement: Persistentable {
+    var id: UUID
     var creationDate: Date
     var title: String
     var info: String?
@@ -18,6 +19,7 @@ final class Requirement: Persistentable {
     var parent: Goal?
     
     init() {
+        self.id = UUID()
         self.creationDate = Date()
         self.title = ""
         self.isDeleted = false

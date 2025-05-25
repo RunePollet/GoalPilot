@@ -13,6 +13,7 @@ import SwiftData
 final class Milestone: Persistentable {
     #Unique<Milestone>([\.orderIndex])
     
+    var id: UUID
     var title: String
     var info: String?
     var orderIndex: Int
@@ -35,6 +36,7 @@ final class Milestone: Persistentable {
     }
     
     init(orderIndex: Int = 0) {
+        self.id = UUID()
         self.title = ""
         self.orderIndex = orderIndex
         self._pillars = []

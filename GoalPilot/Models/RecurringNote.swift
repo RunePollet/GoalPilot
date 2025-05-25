@@ -91,15 +91,15 @@ final class RecurringNote: NotificationRepresentable, RecurringPlanningEvent, Pe
     static func eventDescriptor(planning: Planning?, weekday: Int? = nil) -> FetchDescriptor<RecurringNote> {
         guard let planning else { return .empty }
         
-        let planningID = planning.persistentModelID
+        let planningID = planning.id
         var predicate: Predicate<RecurringNote> {
             if let weekday {
                 return #Predicate<RecurringNote> {
-                    $0._parent?.persistentModelID == planningID && $0.weekday == weekday && !$0.isDeleted
+                    $0._parent?.id == planningID && $0.weekday == weekday && !$0.isDeleted
                 }
             } else {
                 return #Predicate<RecurringNote> {
-                    $0._parent?.persistentModelID == planningID && !$0.isDeleted
+                    $0._parent?.id == planningID && !$0.isDeleted
                 }
             }
         }
