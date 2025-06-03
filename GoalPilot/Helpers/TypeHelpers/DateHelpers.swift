@@ -80,4 +80,12 @@ extension Date {
         let start = Calendar.current.startOfDay(for: .now)
         return Calendar.current.date(byAdding: components, to: start)!
     }
+    
+    /// Returns a boolean indicating whether a new week started since the given date.
+    static func newWeek(since lastDate: Date) -> Bool {
+        let calendar = Calendar.current
+        let weekAndYear = calendar.dateComponents([.weekOfYear, .year], from: .now)
+        let lastRefreshWeekAndYear = calendar.dateComponents([.weekOfYear, .year], from: lastDate)
+        return weekAndYear != lastRefreshWeekAndYear
+    }
 }

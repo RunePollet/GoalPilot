@@ -137,10 +137,7 @@ extension StreakViewModel {
         checkStreakIncreaser(currentPlanning: currentPlanning)
         
         // Reset the completed activities and incremented streak properties if a new week has started
-        let calendar = Calendar.current
-        let weekAndYear = calendar.dateComponents([.weekOfYear, .year], from: .now)
-        let lastRefreshWeekAndYear = calendar.dateComponents([.weekOfYear, .year], from: lastRefresh)
-        if weekAndYear != lastRefreshWeekAndYear {
+        if Date.newWeek(since: lastRefresh) {
             // Reset the weekly streak if not all activities were achieved
             if currentPlanning.activities.count > completedActivities.count {
                 resetStreak()

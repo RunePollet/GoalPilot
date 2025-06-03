@@ -82,6 +82,7 @@ struct SettingsView: View {
             Section {
                 Link("Give Feedback", destination: URL(string: "https://goalpilot.be/feedback/")!)
                 Link("Share Your Dream", destination: URL(string: "https://goalpilot.be/whats-your-dream/")!)
+                Link("Privacy Policy", destination: URL(string: "https://goalpilot.be/privacy-policy/")!)
             }
             .foregroundStyle(Color.accentColor)
         }

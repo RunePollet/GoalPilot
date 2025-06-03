@@ -19,7 +19,15 @@ struct MainTabView: View {
         case goal
     }
     
+    // View Coordination
     @State private var currentTab: Self.Tab = .journey
+    @State private var showFeedbackAlert = false
+    
+    @AppStorage("LAUNCH_TIMES_THIS_WEEK") private var launchTimesThisWeek = 0
+    @AppStorage("LAST_LAUNCH") private var lastLaunch: Date?
+    @AppStorage("ASKED_FEEDBACK") private var askedFeedback = false
+    
+    // Accessibility
     @Query(Milestone.descriptor()) private var milestones: [Milestone]
     private var maAnimationHandler = MAAnimationHandler()
     
@@ -74,8 +82,36 @@ struct MainTabView: View {
                 createPlanning(for: firstMilestone)
             }
         }
+        .alert("What do you think?", isPresented: $showFeedbackAlert, actions: {
+            Link("Share your thoughts", destination: URL(string: "https://goalpilot.be/feedback/")!)
+            
+            Button("No thanks") {}
+        }, message: {
+            Text(
+                """
+                👋 Hi, I'm Rune, the creator of GoalPilot. And I aim to make this an invaluable app for everyone!
+                So, what do you think of it? 
+                Share anything you want!🤝
+                """
+            )
+        })
         .onChange(of: globalModel.resetUITrigger) {
             self.currentTab = .journey
+        }
+        .onAppear {
+            // Count the amount of launch times this week
+            if let lastLaunch, Date.newWeek(since: lastLaunch) {
+                launchTimesThisWeek = 0
+            }
+            launchTimesThisWeek += 1
+            
+            // Show the feedback alert
+            if launchTimesThisWeek == 4 && !askedFeedback {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    showFeedbackAlert = true
+                    askedFeedback = true
+                }
+            }
         }
     }
     
