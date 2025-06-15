@@ -102,7 +102,23 @@ struct MilestoneForm: View {
             Text("Are you sure that you don't need to achieve this milestone? You won't be able to recover it after removal.")
         }
         .navigationDestination(for: Optional<Planning>.self) { planning in
-            PlanningDetailView(planning: planning!)
+            if let planning {
+                PlanningDetailView(planning: planning)
+            } else {
+                ContentMissingView(
+                    icon: "text.magnifyingglass",
+                    title: "Missing planning",
+                    info:
+                        """
+                        Oops... it seems like this milestone hasn't got a planning. This is not expected.
+                        Please contact me so we can fix this together!
+                        """
+                ) {
+                    if let url = URL(string: "https://goalpilot.be/contact-me/") {
+                        Link("Contact me", destination: url)
+                    }
+                }
+            }
         }
         .navigationDestination(for: TextPropertyEditor<Milestone>.Model.self) { model in
             TextPropertyEditor(model: model)

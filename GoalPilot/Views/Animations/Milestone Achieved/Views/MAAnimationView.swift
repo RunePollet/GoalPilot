@@ -16,7 +16,7 @@ struct MAAnimationView: View {
     
     @State private var indicatorAnchor: Anchor<CGRect>?
     private var starIndicator: Landscape.StarIndicator {
-        let index = handler.currentStar == nil ? 0 : handler.landscapeStars.firstIndex(of: handler.currentStar!)
+        let index = handler.currentStar.map { handler.landscapeStars.firstIndex(of: $0) } ?? 0
         switch index {
         case 1:
             return .secondHillFirst

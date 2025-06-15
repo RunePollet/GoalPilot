@@ -25,9 +25,9 @@ struct SheetViewLayout<Content: View>: View {
     var body: some View {
         VStack {
             VStack(spacing: 10) {
-                if intro != nil {
+                if let intro {
                     // Intro
-                    Text(intro!)
+                    Text(intro)
                 }
                 
                 // Title

@@ -55,10 +55,10 @@ final class Activity: RecurringPlanningEvent, NotificationRepresentable, Persist
         // Set start and end time
         let start = Calendar.current.dateComponents([.hour], from: .now)
         let end = Calendar.current.dateComponents([.hour], from: .now.addingTimeInterval(3600))
-        self.startHour = start.hour!
-        self.startMinute = 0
-        self.endHour = end.hour!
-        self.endMinute = 0
+        self.startHour = start.hour ?? 9
+        self.startMinute = 41
+        self.endHour = end.hour ?? 10
+        self.endMinute = 41
     }
     
     
@@ -82,10 +82,22 @@ final class Activity: RecurringPlanningEvent, NotificationRepresentable, Persist
     /// Returns a boolean indicating wether the reference date has passed the activity.
     func timeIntervalHasPassed() -> Bool {
         let now = Calendar.current.dateComponents([.weekday, .hour, .minute], from: .now)
-        var isSameDay: Bool { now.weekday! == endTimeComponents.weekday! }
-        var dayHasPassed: Bool { now.weekday! > endTimeComponents.weekday! }
-        var hourHasPassed: Bool { now.hour! >= endTimeComponents.hour! }
-        var minuteHasPassed: Bool { now.minute! > endTimeComponents.minute! }
+        var isSameDay: Bool {
+            guard let weekday = now.weekday, let endWeekday = endTimeComponents.weekday else { return true }
+            return weekday == endWeekday
+        }
+        var dayHasPassed: Bool {
+            guard let weekday = now.weekday, let endWeekday = endTimeComponents.weekday else { return true }
+            return weekday > endWeekday
+        }
+        var hourHasPassed: Bool {
+            guard let hour = now.hour, let endHour = endTimeComponents.hour else { return true }
+            return hour >= endHour
+        }
+        var minuteHasPassed: Bool {
+            guard let minute = now.minute, let endMinute = endTimeComponents.minute else { return true }
+            return minute > endMinute
+        }
         
         return dayHasPassed || (isSameDay && hourHasPassed && minuteHasPassed)
     }

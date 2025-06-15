@@ -78,7 +78,7 @@ extension Date {
     /// Returns the date of today at the given time.
     static func today(at components: DateComponents) -> Date {
         let start = Calendar.current.startOfDay(for: .now)
-        return Calendar.current.date(byAdding: components, to: start)!
+        return Calendar.current.date(byAdding: components, to: start) ?? start
     }
     
     /// Returns a boolean indicating whether a new week started since the given date.

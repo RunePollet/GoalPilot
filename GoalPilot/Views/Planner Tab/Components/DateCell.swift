@@ -52,7 +52,10 @@ struct DateCell: View {
         .backgroundPreferenceValue(AnchorPreference.self) { value in
             GeometryReader { geo in
                 let anchor = value[id]
-                let bounds: CGRect = anchor == nil ? .zero : geo[anchor!]
+                let bounds: CGRect = {
+                    guard let anchor else { return .zero }
+                    return geo[anchor]
+                }()
                 
                 HStack {
                     Rectangle()

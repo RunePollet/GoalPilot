@@ -20,7 +20,9 @@ struct ActivityRow: View {
     @State private var showDoneButton = true
     private var interval: String {
         let calendar = Calendar.current
-        return calendar.date(from: activity.startTimeComponents)!.interval(end: calendar.date(from: activity.endTimeComponents)!, compact: true)
+        let start = calendar.date(from: activity.startTimeComponents) ?? calendar.startOfDay(for: .now).addingTimeInterval(3600 * 9 + 60 * 41)
+        let end = calendar.date(from: activity.endTimeComponents) ?? start.addingTimeInterval(3600)
+        return start.interval(end: end, compact: true)
     }
     
     var body: some View {

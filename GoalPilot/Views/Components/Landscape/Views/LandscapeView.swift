@@ -171,7 +171,7 @@ extension Landscape {
                 let lowerBound = (group-1) * 4 + 1
                 let upperBound = group * 4
                 var values = totalStars[lowerBound-1...upperBound-1]
-                if nextStarToReach == nil || (nextStarToReach != nil && values.contains(nextStarToReach!)) {
+                if nextStarToReach == nil || nextStarToReach.map({ values.contains($0) }) ?? false {
                     if upperBound < totalStars.count {
                         let nextValue = totalStars[upperBound]
                         values.append(nextValue)

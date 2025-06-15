@@ -52,8 +52,8 @@ class StarPowerupHandler {
     
     /// Indicates if the user has currently completed the powerup animation.
     private var mainStarReachedTarget: Bool {
-        if completionTimer != nil {
-            return completionTimer!.fireDate <= Date.now
+        if let completionTimer {
+            return completionTimer.fireDate <= Date.now
         }
         return false
     }

@@ -16,7 +16,7 @@ struct OnDismissModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .onChange(of: path.count) { oldValue, newValue in
-                if (pathCount == nil && oldValue > newValue) || (pathCount != nil && newValue < pathCount!) {
+                if (pathCount == nil && oldValue > newValue) || pathCount.map({ newValue < $0 }) ?? false {
                     completion()
                 } else {
                     pathCount = oldValue

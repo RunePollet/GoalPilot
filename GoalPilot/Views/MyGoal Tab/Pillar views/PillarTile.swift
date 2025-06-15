@@ -93,7 +93,7 @@ struct PillarTile: View {
     
     private func milestoneRepresentation(_ milestone: Milestone) -> some View {
         HStack(alignment: .top) {
-            milestoneLine(index: milestones.firstIndex(of: milestone)!, achieved: milestone.achieved)
+            milestoneLine(index: milestones.firstIndex(of: milestone) ?? 0, achieved: milestone.achieved)
             
             VStack(alignment: .leading, spacing: 10) {
                 Text(milestone.title)
@@ -102,8 +102,8 @@ struct PillarTile: View {
                     .multilineTextAlignment(.leading)
                     .foregroundStyle(enlarged ? Color.primary : Color.secondary)
                 
-                if enlarged && milestone.info != nil {
-                    Text(milestone.info!)
+                if let info = milestone.info, enlarged {
+                    Text(info)
                         .font(.caption)
                         .multilineTextAlignment(.leading)
                         .foregroundStyle(Color.secondary)

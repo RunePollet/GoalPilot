@@ -33,11 +33,11 @@ struct QuestionViewLayout<Content: View>: View {
             Spacer()
                 .limitFrame(maxHeight: spacing.top ?? pct(30/852, of: .height))
             
-            if preText != nil {
+            if let preText {
                 // Pretext
-                Text(preText!.text)
-                    .foregroundStyle(preText!.style.color ?? .white)
-                    .font(preText!.style.font ?? .body)
+                Text(preText.text)
+                    .foregroundStyle(preText.style.color ?? .white)
+                    .font(preText.style.font ?? .body)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal)
             }
@@ -52,11 +52,11 @@ struct QuestionViewLayout<Content: View>: View {
                     .font(title.style.font ?? .title)
                     .fontWeight(.bold)
                 
-                if tip != nil {
+                if let tip {
                     // Tip
-                    Text(tip!.text)
-                        .foregroundStyle(tip!.style.color ?? .white)
-                        .font(tip!.style.font ?? .subheadline)
+                    Text(tip.text)
+                        .foregroundStyle(tip.style.color ?? .white)
+                        .font(tip.style.font ?? .subheadline)
                         .fontWeight(.semibold)
                         .opacity(0.6)
                 }

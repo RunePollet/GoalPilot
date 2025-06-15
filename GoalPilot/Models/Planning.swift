@@ -69,7 +69,10 @@ final class Planning: Persistentable {
     /// Returns all notifications and activities currently going on.
     func currentActivities() -> [Activity] {
         let ref = Activity.referenceDate(for: .now)
-        return activities.filter { $0.refDeadline <= ref && ref <= $0.refEnd! }
+        return activities.filter {
+            guard let refEnd = $0.refEnd else { return $0.refDeadline <= ref }
+            return $0.refDeadline <= ref && ref <= refEnd
+        }
     }
     
     /// Returns all events of this planning and any reminders for the given day sorted from earliest to latest.

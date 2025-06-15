@@ -13,7 +13,7 @@ extension UIWindow {
     @MainActor
     func presentAlert(_ alert: UIAlertController, canBeRepeated: Bool = true) {
         
-        let hasShownAlert = UserDefaults.standard.bool(forKey: alert.title! + alert.message!)
+        let hasShownAlert = UserDefaults.standard.bool(forKey: (alert.title ?? UUID().uuidString) + (alert.message ?? ""))
         if !hasShownAlert {
             // Check if there is already a view controller presented
             if let presentedVC = self.rootViewController?.presentedViewController {
@@ -28,7 +28,7 @@ extension UIWindow {
             
             // Set the flag
             if !canBeRepeated {
-                UserDefaults.standard.set(true, forKey: alert.title! + alert.message!)
+                UserDefaults.standard.set(true, forKey: (alert.title ?? UUID().uuidString) + (alert.message ?? ""))
             }
         }
     }

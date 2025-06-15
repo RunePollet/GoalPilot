@@ -202,9 +202,9 @@ extension StreakViewModel {
     private func addStreakIncrementNotification() {
         let content = UNMutableNotificationContent()
         content.title = "Update your streak!"
-        content.body = "\(TextService.shared.weeklyFeedbackExclamations.randomElement()!) We need your energy to update your weekly streak!"
+        content.body = "\(TextService.shared.weeklyFeedbackExclamations.randomElement() ?? "Excellent job this week!") We need your energy to update your weekly streak!"
         
-        let triggerDate = Calendar.current.nextDate(after: .now, matching: .init(hour: 19, weekday: 1), matchingPolicy: .nextTime)!
+        let triggerDate = Calendar.current.nextDate(after: .now, matching: .init(hour: 19, weekday: 1), matchingPolicy: .nextTime) ?? .now.addingTimeInterval(3600 * 24 * 7)
         
         let components = Calendar.current.dateComponents(in: .current, from: triggerDate)
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)

@@ -64,8 +64,8 @@ struct GMStarPowerup: View {
                 }
                 
                 // Posttitle
-                if showPostTitle {
-                    Text(globalModel.posttitle!)
+                if let posttitle = globalModel.posttitle, showPostTitle {
+                    Text(posttitle)
                         .foregroundStyle(.white)
                         .font(.title)
                         .fontWeight(.bold)

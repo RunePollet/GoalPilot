@@ -83,7 +83,9 @@ struct MainTabView: View {
             }
         }
         .alert("What do you think?", isPresented: $showFeedbackAlert, actions: {
-            Link("Share your thoughts", destination: URL(string: "https://goalpilot.be/feedback/")!)
+            if let url = URL(string: "https://goalpilot.be/feedback/") {
+                Link("Share your thoughts", destination: url)
+            }
             
             Button("No thanks") {}
         }, message: {

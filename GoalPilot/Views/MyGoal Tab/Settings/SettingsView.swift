@@ -80,9 +80,15 @@ struct SettingsView: View {
             
             // Website Links
             Section {
-                Link("Give Feedback", destination: URL(string: "https://goalpilot.be/feedback/")!)
-                Link("Share Your Dream", destination: URL(string: "https://goalpilot.be/whats-your-dream/")!)
-                Link("Privacy Policy", destination: URL(string: "https://goalpilot.be/privacy-policy/")!)
+                if let url = URL(string: "https://goalpilot.be/feedback/") {
+                    Link("Give Feedback", destination: url)
+                }
+                if let url = URL(string: "https://goalpilot.be/whats-your-dream/") {
+                    Link("Share Your Dream", destination: url)
+                }
+                if let url = URL(string: "https://goalpilot.be/privacy-policy/") {
+                    Link("Privacy Policy", destination: url)
+                }
             }
             .foregroundStyle(Color.accentColor)
         }

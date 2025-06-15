@@ -109,7 +109,7 @@ struct NotificationForm<T: NotificationRepresentable & PlanningEvent & Persisten
             if isCreating {
                 let calendar = Calendar.current
                 let components = calendar.dateComponents([.hour, .minute], from: .now)
-                let date = calendar.date(byAdding: components, to: calendar.startOfDay(for: date))!
+                let date = calendar.date(byAdding: components, to: calendar.startOfDay(for: date)) ?? .now
                 wrapper.model.refDeadline = date
             }
         }

@@ -20,11 +20,11 @@ class PlannerViewModel: Persistent {
     private(set) var displayedDates: [Date] = []
     private(set) var displayedMonth: DateComponents = Calendar.current.dateComponents([.year, .month], from: Date.now)
     var firstDateOfDisplayedMonth: Date {
-        calendar.date(from: displayedMonth)!
+        calendar.date(from: displayedMonth) ?? calendar.startOfDay(for: .now)
     }
     var lastDateOfDisplayedMonth: Date {
-        let lastDate = calendar.date(byAdding: .month, value: 1, to: firstDateOfDisplayedMonth)!
-        return calendar.date(byAdding: .day, value: -1, to: lastDate)!
+        let lastDate = calendar.date(byAdding: .month, value: 1, to: firstDateOfDisplayedMonth) ?? calendar.startOfDay(for: .now.addingTimeInterval(3600 * 24 * 30))
+        return calendar.date(byAdding: .day, value: -1, to: lastDate) ?? calendar.startOfDay(for: lastDate.addingTimeInterval(-3600 * 24))
     }
     
     // Accessibility
@@ -53,7 +53,7 @@ class PlannerViewModel: Persistent {
 extension PlannerViewModel {
     func loadDatesForNextMonth(inDirection direction: Calendar.SearchDirection, animation: Animation? = nil) {
         // Update the displayedMonth property
-        let dateInNextMonth = calendar.date(byAdding: .month, value: direction == .forward ? 1 : -1, to: firstDateOfDisplayedMonth)!
+        let dateInNextMonth = calendar.date(byAdding: .month, value: direction == .forward ? 1 : -1, to: firstDateOfDisplayedMonth) ?? firstDateOfDisplayedMonth.addingTimeInterval((direction == .forward ? 1 : -1) * 3600 * 24 * 30)
         withAnimation(animation) {
             displayedMonth = calendar.dateComponents([.year, .month], from: dateInNextMonth)
         }
@@ -196,7 +196,7 @@ extension PlannerViewModel {
         content.title = "Standby mode"
         content.body = "How are you doing?"
         
-        let triggerDate = Calendar.current.date(byAdding: .second, value: 10, to: .now)!
+        let triggerDate = Calendar.current.date(byAdding: .weekOfYear, value: 3, to: .now) ?? .now.addingTimeInterval(3600 * 24 * 7 * 3)
         let components = Calendar.current.dateComponents(in: .current, from: triggerDate)
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
         

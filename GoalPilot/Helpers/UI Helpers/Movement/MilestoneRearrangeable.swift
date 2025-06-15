@@ -49,7 +49,7 @@ struct MilestoneRearrangeableModifier: ViewModifier {
     
     func updateOrderIndices() {
         milestones = milestones.map { milestone in
-            let index = (milestones.count-1) - milestones.firstIndex(of: milestone)!
+            let index = (milestones.count-1) - (milestones.firstIndex(of: milestone) ?? 0)
             milestone.orderIndex = index+1
             return milestone
         }

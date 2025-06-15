@@ -156,8 +156,8 @@ private struct AttributesItemRow<Attribute: Equatable>: View {
                 }
                 
                 // Description
-                if showInfo && info != nil {
-                    info(info!)
+                if let info, showInfo {
+                    infoView(info)
                 }
                 
                 // Attribute list
@@ -202,7 +202,7 @@ private struct AttributesItemRow<Attribute: Equatable>: View {
         .clipped()
     }
     
-    private func info(_ info: String) -> some View {
+    private func infoView(_ info: String) -> some View {
         VStack(spacing: 0) {
             Divider()
             ScrollView {

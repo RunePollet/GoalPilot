@@ -62,7 +62,7 @@ extension Persistentable {
 extension Persistentable {
     /// The underlying value if it isn't flagged as deleted.
     var activeValue: Self? { // !! weak is to control references --> it expects ONLY A CLASS TYPE, but Self is a protocol so can be a struct, enum etc. + weak DOESN'T HAVE EFFECT ON COMPUTED PROPERTIES as they aren't stored, so any references to a class within it are deleted when exiting its scope !!
-        isDeleted == false ? self : nil
+        isDeleted ? nil : self
     }
 }
 

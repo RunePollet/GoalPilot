@@ -181,8 +181,8 @@ struct MotivationalViewLayout<Icon: View>: View {
     private func tab(_ tab: (text: String, isQuote: Bool, credits: (label: String, link: String)?)) -> some View {
         ZStack {
             // Credits
-            if let credits = tab.credits {
-                Link(destination: URL(string: credits.link)!) {
+            if let credits = tab.credits, let url = URL(string: credits.link) {
+                Link(destination: url) {
                     Group {
                         Text("- ")
                         + Text(credits.label)

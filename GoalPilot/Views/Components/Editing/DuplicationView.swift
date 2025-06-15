@@ -38,7 +38,7 @@ struct DuplicationView<T: Duplicatable & RecurringPlanningEvent & NotificationRe
                         }
                     } label: {
                         HStack(spacing: 5) {
-                            Text(day.weekdayDescription!.capitalized)
+                            Text(day.weekdayDescription?.capitalized ?? "Oops... I guess this day doesn't exist")
                             
                             Spacer()
                             
@@ -82,8 +82,8 @@ struct DuplicationView<T: Duplicatable & RecurringPlanningEvent & NotificationRe
             duplicate.weekday = day
             
             // Insert the object into the model context if needed
-            if duplicate is any Persistentable {
-                (object as! any Persistentable).insert(into: modelContext)
+            if let duplicate = duplicate as? any Persistentable {
+                duplicate.insert(into: modelContext)
             }
         }
         

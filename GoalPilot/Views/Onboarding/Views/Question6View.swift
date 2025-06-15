@@ -74,19 +74,23 @@ struct Question6View: View {
         ).padding(.horizontal)
         
         return ListView(focusedField: focusedField, inputView: { inputView }, listContent: milestones) { milestone in
-            let i = milestones.firstIndex(of: milestone)!
+            let i = milestones.firstIndex(of: milestone)
             @Bindable var milestone = milestone
             
-            return MilestoneItemRow(milestone: milestone, dragItem: $dragItem, remove: {
-                withAnimation(.bouncy) {
-                    _ = milestones.remove(at: i)
+            return Group {
+                if let i {
+                    MilestoneItemRow(milestone: milestone, dragItem: $dragItem, remove: {
+                        withAnimation(.bouncy) {
+                            _ = milestones.remove(at: i)
+                        }
+                        milestone.delete(from: modelContext)
+                    })
+                    .milestoneRearrangeable(milestone: milestone, milestones: $milestones, dragItem: $dragItem)
+                    .rearrangeable()
+                    .scrollDisabled(dragItem != nil)
                 }
-                milestone.delete(from: modelContext)
-            })
-            .milestoneRearrangeable(milestone: milestone, milestones: $milestones, dragItem: $dragItem)
+            }
         }
-        .rearrangeable()
-        .scrollDisabled(dragItem != nil)
     }
 }
 

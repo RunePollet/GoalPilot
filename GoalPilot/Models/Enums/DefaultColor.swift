@@ -74,6 +74,6 @@ enum DefaultColor: Int, Identifiable, CaseIterable, CustomStringConvertible {
     }
     
     static func random() -> Self {
-        return Self.init(rawValue: Int.random(in: 1...12))!
+        return Self.init(rawValue: Int.random(in: 1...12)) ?? Self.yellow
     }
 }

@@ -64,8 +64,7 @@ struct LargeDateCell: View {
         else if let notification = event as? RecurringNote {
             SmallPlanningEventRow(color: notification.color, title: notification.subtitle)
         }
-        else {
-            let reminder = event as! Reminder
+        else if let reminder = event as? Reminder {
             SmallPlanningEventRow(color: reminder.color, title: reminder.subtitle)
         }
     }

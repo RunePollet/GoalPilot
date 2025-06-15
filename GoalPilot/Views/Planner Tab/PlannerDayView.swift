@@ -102,13 +102,29 @@ struct PlannerDayView: View {
         let weekday = Calendar.current.component(.weekday, from: date)
         return NavigationModelStack(isCreating: true) {
             Group {
-                switch content {
-                case .addActivity:
-                    CreateActivityView(activity: .init(weekday: weekday), parent: plannerModel.currentPlanning!)
-                case .addRecurringNote:
-                    CreateRecurringNoteView(recurringNote: .init(weekday: weekday), parent: plannerModel.currentPlanning!)
-                case .addReminder:
-                    CreateReminderView()
+                if let currentPlanning = plannerModel.currentPlanning {
+                    switch content {
+                    case .addActivity:
+                        CreateActivityView(activity: .init(weekday: weekday), parent: currentPlanning)
+                    case .addRecurringNote:
+                        CreateRecurringNoteView(recurringNote: .init(weekday: weekday), parent: currentPlanning)
+                    case .addReminder:
+                        CreateReminderView()
+                    }
+                } else {
+                    ContentMissingView(
+                        icon: "text.magnifyingglass",
+                        title: "Missing planning",
+                        info:
+                            """
+                            Oops... it seems like you haven't selected or created a planning yet. To create one, please navigate to the 'Journey' tab and tap the 'Create Planning' button underneath the milestone you want to create it for. 
+                            If this isn't the case, please contact me so we can fix this together!
+                            """
+                    ) {
+                        if let url = URL(string: "https://goalpilot.be/contact-me/") {
+                            Link("Contact me", destination: url)
+                        }
+                    }
                 }
             }
         }

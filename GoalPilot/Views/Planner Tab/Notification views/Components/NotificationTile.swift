@@ -26,10 +26,10 @@ struct NotificationTile<T: NotificationRepresentable & PlanningEvent & Persisten
     
     private var customSection: some View {
         Group {
-            if notification is Reminder {
+            if let notification = notification as? Reminder {
                 TileDoneButton {
                     withAnimation {
-                        (notification as! Reminder).delete(from: modelContext)
+                        notification.delete(from: modelContext)
                     }
                 }
                 .foregroundStyle(colorScheme == .dark ? Color.black.opacity(0.6) : Color.secondary)

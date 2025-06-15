@@ -28,23 +28,23 @@ struct SnapToNearestViewModifier: ViewModifier {
                 return axis == .horizontal ? geo.contentOffset.x : geo.contentOffset.y
             }, action: { oldValue, newValue in
                 // Only set the time since last update if this is the first update of the scroll
-                guard timeSinceLastUpdate != nil && snappingEnabled else {
-                    timeSinceLastUpdate = .now
+                guard let timeSinceLastUpdate, snappingEnabled else {
+                    self.timeSinceLastUpdate = .now
                     return
                 }
                 
                 // Calculate the current velocity
                 let translation = abs(oldValue - newValue)
-                let timeInterval = Date.now.timeIntervalSince(timeSinceLastUpdate!)
+                let timeInterval = Date.now.timeIntervalSince(timeSinceLastUpdate)
                 let velocity = translation/timeInterval
                 
                 // Snap to the nearest item if the velocity is low enough
                 if velocity < 15 {
                     snapToNearestItem()
-                    timeSinceLastUpdate = nil
+                    self.timeSinceLastUpdate = nil
                     snappingEnabled = false
                 } else {
-                    timeSinceLastUpdate = .now
+                    self.timeSinceLastUpdate = .now
                 }
             })
             .onScrollPhaseChange { oldPhase, newPhase, context in

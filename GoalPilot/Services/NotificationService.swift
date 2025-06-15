@@ -41,10 +41,10 @@ class NotificationService: NSObject, Persistent {
     
     func requestAuthorization(_ completion: ((_ didAllow: Bool) -> Void)? = nil) {
         notificationCenter.requestAuthorization(options: [.alert, .sound]) { didAllow, error in
-            if error == nil {
-                completion?(didAllow)
+            if let error {
+                print("Error requesting notification authorization from the user: \(error.localizedDescription)")
             } else {
-                print("Error requesting notification authorization from the user: \(error!.localizedDescription)")
+                completion?(didAllow)
             }
         }
     }
@@ -71,9 +71,9 @@ class NotificationService: NSObject, Persistent {
             }
             
             // Save the completion
-            if completion != nil {
+            if let completion {
                 let id = request.identifier
-                self.completions[id] = completion!
+                self.completions[id] = completion
             }
         }
     }

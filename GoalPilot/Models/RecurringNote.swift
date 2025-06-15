@@ -45,8 +45,8 @@ final class RecurringNote: NotificationRepresentable, RecurringPlanningEvent, Pe
         self.isEnabled = true
         self.isDeleted = false
         self.weekday = weekday
-        self.hour = Calendar.current.dateComponents([.hour], from: .now).hour!
-        self.minute = Calendar.current.dateComponents([.minute], from: .now).minute!
+        self.hour = Calendar.current.dateComponents([.hour], from: .now).hour ?? 9
+        self.minute = Calendar.current.dateComponents([.minute], from: .now).minute ?? 41
         self.colorRed = 0
         self.colorGreen = 0
         self.colorBlue = 0
@@ -77,8 +77,10 @@ final class RecurringNote: NotificationRepresentable, RecurringPlanningEvent, Pe
         }
         set {
             let components = Calendar.current.dateComponents([.hour, .minute], from: newValue)
-            hour = components.hour!
-            minute = components.minute!
+            if let hour = components.hour, let minute = components.minute {
+                self.hour = hour
+                self.minute = minute
+            }
         }
     }
     
