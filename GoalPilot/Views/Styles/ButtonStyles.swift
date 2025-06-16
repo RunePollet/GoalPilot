@@ -34,3 +34,17 @@ extension ButtonStyle where Self == PlainNoAnimationButtonStyle {
     /// A plain button that doesn't have a tap animation.
     static var noAnimation: PlainNoAnimationButtonStyle { .init() }
 }
+
+
+// MARK: - SwitchingButtonStyles
+extension Button {
+    /// Switches between the first and second given button styles. If style is not given, no style will be applied.
+    @ViewBuilder
+    func switchingButtonStyles<ButtonStyle1: ButtonStyle>(apply: Bool, style1: ButtonStyle1) -> some View {
+        if apply {
+            self.buttonStyle(style1)
+        } else {
+            self
+        }
+    }
+}

@@ -25,11 +25,18 @@ struct OnboardingSequenceView: View {
                 // The onboarding views
                 views
                 
-                if let nextButton = onboardingModel.nextButton, let _ = onboardingModel.secondaryButton {
-                    // Next button
-                    self.nextButton(nextButton)
-                        .frame(maxHeight: .infinity, alignment: .bottom)
+                VStack {
+                    // Data required warning
+                    if onboardingModel.showDataRequiredWarning {
+                        dataRequiredWarning
+                    }
+                    
+                    if let nextButton = onboardingModel.nextButton, let _ = onboardingModel.secondaryButton {
+                        // Next button
+                        self.nextButton(nextButton)
+                    }
                 }
+                .frame(maxHeight: .infinity, alignment: .bottom)
             }
             .toolbar {
                 toolbar
@@ -96,9 +103,31 @@ extension OnboardingSequenceView {
         }
     }
     
+    private var dataRequiredWarning: some View {
+        Text("Please add requested info before continuing.")
+            .font(.caption2)
+            .foregroundStyle(.white)
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    withAnimation {
+                        onboardingModel.showDataRequiredWarning = false
+                    }
+                }
+            }
+    }
+    
     private func nextButton(_ nextButton: OnboardingViewModel.BottomBarButton) -> some View {
         Button {
-            nextButton.performAction(goal: goal, onboardingModel: onboardingModel, modelContext: modelContext)
+            if nextButton.isDisabled() {
+                // Notify the user
+                if !onboardingModel.showDataRequiredWarning {
+                    withAnimation {
+                        onboardingModel.showDataRequiredWarning = true
+                    }
+                }
+            } else {
+                nextButton.performAction(goal: goal, onboardingModel: onboardingModel, modelContext: modelContext)
+            }
         } label: {
             Text(nextButton.title)
                 .font(.title3)
@@ -106,7 +135,7 @@ extension OnboardingSequenceView {
                 .foregroundStyle(.thinMaterial)
                 .opacity(nextButton.isDisabled() ? 0.3 : 1)
         }
-        .disabled(nextButton.isDisabled())
+        .switchingButtonStyles(apply: nextButton.isDisabled(), style1: .noAnimation)
     }
     
     /// The view to show in the sheet of each view.

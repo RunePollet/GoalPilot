@@ -22,6 +22,7 @@ class OnboardingViewModel: Persistent {
     var bottomBarSetter: (() -> Void)?
     var nextButton: BottomBarButton?
     var secondaryButton: BottomBarButton?
+    var showDataRequiredWarning: Bool = false
     
     // Navigation
     private(set) var currentView: OnboardingViewModel.Views = .welcome
