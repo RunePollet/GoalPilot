@@ -114,6 +114,8 @@ final class RecurringNote: NotificationRepresentable, RecurringPlanningEvent, Pe
     
     
     // MARK: Persistentable
+    var isConfigured: Bool { !subtitle.isEmpty && parent != nil }
+    
     func preDeletion(_ modelContext: ModelContext) {
         let id = id
         DispatchQueue.main.async {
@@ -121,7 +123,10 @@ final class RecurringNote: NotificationRepresentable, RecurringPlanningEvent, Pe
         }
     }
     
-    var isConfigured: Bool { !subtitle.isEmpty && parent != nil }
+    static func descriptor() -> FetchDescriptor<RecurringNote> {
+        let predicate = #Predicate<RecurringNote> { !$0.isDeleted }
+        return FetchDescriptor(predicate: predicate)
+    }
     
     
     // MARK: Duplicatable

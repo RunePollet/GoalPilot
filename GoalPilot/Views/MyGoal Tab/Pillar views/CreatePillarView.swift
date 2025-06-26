@@ -21,7 +21,7 @@ struct CreatePillarView: View {
             .navigationTitle("Add Pillar")
             .navigationBarTitleDisplayMode(.inline)
             .modelInserter(model: pillar, delay: 0.5, insertCompletion: {
-                pillar.parent = goal
+                pillar.establishRelationship(for: \.parent, with: goal, within: modelContext)
             }, doneCompletion: { saveCompletion?(pillar) })
     }
 }

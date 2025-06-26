@@ -4,5 +4,7 @@
 <dict>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We will use your location only to adapt the app&apos;s design to your local weather.</string>
 </dict>
 </plist>

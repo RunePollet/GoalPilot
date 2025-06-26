@@ -38,7 +38,7 @@ struct Question6View: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .dismissKeyboardArea { focusedField = nil }
         .onboardingBottomBarSetter {
-            onboardingModel.nextButton = .init(isDisabled: { !persistedMilestones.filter { !$0.isConfigured }.isEmpty || persistedMilestones.isEmpty })
+            onboardingModel.nextButton = .init(actionRequiredLabel: "Please add the title for at least one milestone by clicking the plus button before continuing.", isDisabled: { !persistedMilestones.filter { !$0.isConfigured }.isEmpty || persistedMilestones.isEmpty })
         }
         .onAppear {
             milestones = persistedMilestones
@@ -58,7 +58,7 @@ struct Question6View: View {
                 newMilestone.insert(into: modelContext)
                 
                 // Establish parent relationship
-                newMilestone.parent = goal
+                newMilestone.establishRelationship(for: \.parent, with: goal, within: modelContext)
                 
                 withAnimation(.smooth) {
                     milestones.insert(newMilestone, at: 0)
@@ -85,12 +85,12 @@ struct Question6View: View {
                         }
                         milestone.delete(from: modelContext)
                     })
-                    .milestoneRearrangeable(milestone: milestone, milestones: $milestones, dragItem: $dragItem)
-                    .rearrangeable()
-                    .scrollDisabled(dragItem != nil)
+                    .rearrange(milestone: milestone, milestones: $milestones, dragItem: $dragItem)
                 }
             }
         }
+        .rearrangeable()
+        .scrollDisabled(dragItem != nil)
     }
 }
 

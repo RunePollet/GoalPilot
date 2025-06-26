@@ -38,28 +38,32 @@ struct GoalSummary: View {
             .strokeHidden()
             
             Section("Description") {
-                if let info = goal.info {
-                    NavigationLink(info, value: GoalDetailDestination()) 
-                } else {
-                    NavigationLink(value: TextPropertyEditor<Goal>.Model.goalDescription(goal)) {
-                        Text("Add description")
-                            .drillIn()
+                Group {
+                    if let info = goal.info {
+                        NavigationLink(info, value: GoalDetailDestination())
+                    } else {
+                        NavigationLink(value: TextPropertyEditor<Goal>.Model.goalDescription(goal)) {
+                            Text("Add description")
+                                .drillIn()
+                        }
                     }
                 }
+                .buttonStyle(.tappable)
             }
-            .buttonStyle(.tappable)
             
             Section("Path Summary") {
-                if let pathSummary = goal.pathSummary {
-                    NavigationLink(pathSummary, value: GoalDetailDestination())
-                } else {
-                    NavigationLink(value: TextPropertyEditor<Goal>.Model.pathSummary(goal)) {
-                        Text("Add your path summary")
-                            .drillIn()
+                Group {
+                    if let pathSummary = goal.pathSummary {
+                        NavigationLink(pathSummary, value: GoalDetailDestination())
+                    } else {
+                        NavigationLink(value: TextPropertyEditor<Goal>.Model.pathSummary(goal)) {
+                            Text("Add your path summary")
+                                .drillIn()
+                        }
                     }
                 }
+                .buttonStyle(.tappable)
             }
-            .buttonStyle(.tappable)
             
             // Pillars
             Section("Pillars") {

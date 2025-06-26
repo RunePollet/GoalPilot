@@ -26,7 +26,7 @@ struct CreatePlanningView: View {
             .navigationBarTitleDisplayMode(.inline)
             .modelInserter(model: planning, delay: 0.5, insertCompletion: {
                 planning.parent = parent
-                plannerModel.updateCurrentPlanning(modelContext)
+                planning.establishRelationship(for: \.parent, with: parent, within: modelContext)
             }, cancelCompletion: {
                 plannerModel.updateCurrentPlanning(modelContext)
             }, doneCompletion: {

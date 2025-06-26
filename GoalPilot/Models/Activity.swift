@@ -165,7 +165,7 @@ final class Activity: RecurringPlanningEvent, NotificationRepresentable, Persist
         let content = UNMutableNotificationContent()
         content.title = title
         content.subtitle = subtitle
-        content.body = TextService.shared.motivatingExclamations.randomElement()!
+        content.body = TextService.shared.motivatingExclamations.randomElement() ?? "Let's do this!"
         content.sound = .default
         
         return .init(identifier: id.uuidString, content: content, trigger: trigger)
@@ -182,6 +182,8 @@ final class Activity: RecurringPlanningEvent, NotificationRepresentable, Persist
     
     
     // MARK: Persistentable
+    var isConfigured: Bool { !subtitle.isEmpty && parent != nil }
+    
     func preDeletion(_ modelContext: ModelContext) {
         let id = id
         DispatchQueue.main.async {
@@ -189,8 +191,9 @@ final class Activity: RecurringPlanningEvent, NotificationRepresentable, Persist
         }
     }
     
-    var isConfigured: Bool {
-        return !subtitle.isEmpty && parent != nil
+    static func descriptor() -> FetchDescriptor<Activity> {
+        let predicate = #Predicate<Activity> { !$0.isDeleted }
+        return FetchDescriptor(predicate: predicate)
     }
     
     

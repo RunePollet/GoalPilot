@@ -59,8 +59,8 @@ struct MilestoneRearrangeableModifier: ViewModifier {
 }
 
 extension View {
-    /// An implementation of the rearrangable modifier specifically for a list of milestones.
-    func milestoneRearrangeable(milestone: Milestone, milestones: Binding<[Milestone]>, dragItem: Binding<Milestone?>) -> some View {
+    /// An implementation of the rearrange modifier specifically for a list of milestones.
+    func rearrange(milestone: Milestone, milestones: Binding<[Milestone]>, dragItem: Binding<Milestone?>) -> some View {
         modifier(MilestoneRearrangeableModifier(milestone: milestone, milestones: milestones, dragItem: dragItem))
     }
 }

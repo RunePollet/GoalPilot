@@ -123,6 +123,7 @@ extension OnboardingViewModel {
         
         var title: String = "Next"
         var action: Self.Action = .next
+        var actionRequiredLabel: String = "Please add requested info before continuing."
         var completion: (() -> Void)? = nil
         var isDisabled: () -> Bool = { false }
         

@@ -89,6 +89,8 @@ final class Reminder: NotificationRepresentable, PlanningEvent, Persistentable {
     
     
     // MARK: Persistentable
+    var isConfigured: Bool { !subtitle.isEmpty && parent != nil }
+    
     func preDeletion(_ modelContext: ModelContext) {
         let id = id
         DispatchQueue.main.async {
@@ -96,5 +98,8 @@ final class Reminder: NotificationRepresentable, PlanningEvent, Persistentable {
         }
     }
     
-    var isConfigured: Bool { !subtitle.isEmpty && parent != nil }
+    static func descriptor() -> FetchDescriptor<Reminder> {
+        let predicate = #Predicate<Reminder> { !$0.isDeleted }
+        return FetchDescriptor(predicate: predicate)
+    }
 }

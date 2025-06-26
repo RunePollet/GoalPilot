@@ -69,7 +69,7 @@ struct PillarForm: View {
                 }
                 .buttonStyle(.tappable)
             } footer: {
-                Text("Add an image or choose an icon to represent this pillar.")
+                Text("Add an image or choose an icon to represent this pillar. The icon will only show if there is no image.")
                     .foregroundStyle(Color.secondary)
             }
             

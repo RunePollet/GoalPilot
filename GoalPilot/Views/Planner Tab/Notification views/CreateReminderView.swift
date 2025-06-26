@@ -9,6 +9,7 @@ import SwiftUI
 
 /// Creates a notification.
 struct CreateReminderView: View {
+    @Environment(\.modelContext) private var modelContext
     @Environment(Goal.self) private var goal
     @Environment(PlannerViewModel.self) private var plannerModel
     @Environment(NavigationViewModel.self) private var navigationModel
@@ -20,7 +21,7 @@ struct CreateReminderView: View {
             .navigationTitle("Add Reminder")
             .navigationBarTitleDisplayMode(.inline)
             .modelInserter(model: reminder, insertCompletion: {
-                reminder.parent = goal
+                reminder.establishRelationship(for: \.parent, with: goal, within: modelContext)
             }, doneCompletion: {
                 reminder.updateNotification(active: true)
             })

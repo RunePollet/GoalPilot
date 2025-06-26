@@ -35,7 +35,7 @@ struct CreateMilestoneView: View {
             .navigationTitle("Add Milestone")
             .navigationBarTitleDisplayMode(.inline)
             .modelInserter(model: milestone, delay: 0.5, insertCompletion: {
-                milestone.parent = goal
+                milestone.establishRelationship(for: \.parent, with: goal, within: modelContext)
             }, doneCompletion: {
                 if goal.achieved {
                     goal.setAchieved(false, currentPlanning: plannerModel.currentPlanning)

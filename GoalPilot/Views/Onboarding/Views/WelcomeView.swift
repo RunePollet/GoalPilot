@@ -50,24 +50,22 @@ struct WelcomeView: View {
     }
     
     var nameInput: some View {
-        VStack(spacing: 10) {
-            TextField("Name", text: $givenName)
-                .focused($focused)
-                .textFieldStyle(OnboardingTextFieldStyle(input: $givenName, focused: focused))
-                .textContentType(.nickname)
-                .autocorrectionDisabled(true)
-                .submitLabel(.done)
-                .onChange(of: givenName) {
-                    // Save the name
-                    textService.username = givenName
+        TextField("Name", text: $givenName)
+            .focused($focused)
+            .textFieldStyle(OnboardingTextFieldStyle(input: $givenName, focused: focused))
+            .textContentType(.nickname)
+            .autocorrectionDisabled(true)
+            .submitLabel(.done)
+            .onChange(of: givenName) {
+                // Save the name
+                textService.username = givenName
+            }
+            .onSubmit {
+                if !givenName.isEmpty {
+                    onboardingModel.nextView()
                 }
-                .onSubmit {
-                    if !givenName.isEmpty {
-                        onboardingModel.nextView()
-                    }
-                }
-                .padding(.horizontal, 37)
-                .padding(.bottom)
-        }
+            }
+            .padding(.horizontal, 37)
+            .padding(.bottom)
     }
 }

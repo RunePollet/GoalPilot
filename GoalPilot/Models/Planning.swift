@@ -88,6 +88,8 @@ final class Planning: Persistentable {
     
     
     // MARK: Persistentable
+    var isConfigured: Bool { !title.isEmpty && parent != nil }
+    
     func preDeletion(_ modelContext: ModelContext) {
         let ids = self.activities.map(\.id.uuidString) + self.recurringNotes.map(\.id.uuidString)
         DispatchQueue.main.async {
@@ -95,5 +97,8 @@ final class Planning: Persistentable {
         }
     }
     
-    var isConfigured: Bool { !title.isEmpty && parent != nil }
+    static func descriptor() -> FetchDescriptor<Planning> {
+        let predicate = #Predicate<Planning> { !$0.isDeleted }
+        return FetchDescriptor(predicate: predicate)
+    }
 }

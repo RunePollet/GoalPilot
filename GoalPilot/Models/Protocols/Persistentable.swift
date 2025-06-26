@@ -8,9 +8,16 @@
 import Foundation
 import SwiftData
 
-/// Provides model specific functions for inserting and deleting.
+/// Provides model specific functions for inserting, deleting and management.
 protocol Persistentable: PersistentModel {
-    associatedtype FetchResult: PersistentModel
+    /// Whether the model will be deleted from the persistent store.
+    var isDeleted: Bool { get set }
+    
+    /// Whether the values represent a configured object of this type.
+    var isConfigured: Bool { get }
+    
+    /// Sets the given value for the given property in a transaction within the given model context.
+    func establishRelationship<T: PersistentModel>(for property: ReferenceWritableKeyPath<Self, T?>, with model: T, within modelContext: ModelContext)
     
     /// Inserts this model in the given model context and does any additional set up.
     func insert(into modelContext: ModelContext)
@@ -22,20 +29,27 @@ protocol Persistentable: PersistentModel {
     func preDeletion(_ modelContext: ModelContext)
     
     /// Returns a fetch descriptor to fetch all relevant models of this type.
-    static func descriptor() -> FetchDescriptor<FetchResult>
-    
-    /// Whether the model will be deleted from the persistent store.
-    var isDeleted: Bool { get set }
-    
-    /// Whether the values represent a configured object of this type.
-    var isConfigured: Bool { get }
+    static func descriptor() -> FetchDescriptor<Self>
 }
 
 // Default implementation
 extension Persistentable {
+    func establishRelationship<T: PersistentModel>(for property: ReferenceWritableKeyPath<Self, T?>, with model: T, within modelContext: ModelContext) {
+        do {
+            try modelContext.transaction {
+                self[keyPath: property] = model
+            }
+        } catch {
+            print("Failed to establish relationship for \(property.debugDescription) with \(model): \(error.localizedDescription)")
+        }
+    }
+    
     func insert(into modelContext: ModelContext) {
-        modelContext.insert(self)
-        modelContext.saveChanges()
+        do {
+            try modelContext.transaction { modelContext.insert(self) }
+        } catch {
+            print("Model insertion failed: \(error.localizedDescription)")
+        }
     }
     
     func delete(from modelContext: ModelContext) {
@@ -46,16 +60,16 @@ extension Persistentable {
         isDeleted = true
         
         // Delete the model
-        modelContext.delete(self)
-        modelContext.saveChanges()
+        do {
+            try modelContext.transaction {
+                modelContext.delete(self)
+            }
+        } catch {
+            print("Model deletion failed: \(error.localizedDescription)")
+        }
     }
     
     func preDeletion(_ modelContext: ModelContext) {}
-    
-    static func descriptor() -> FetchDescriptor<Self> {
-        let predicate = #Predicate<Self> { !$0.isDeleted }
-        return FetchDescriptor(predicate: predicate)
-    }
 }
 
 // Correct access support

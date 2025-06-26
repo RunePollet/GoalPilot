@@ -25,7 +25,7 @@ struct NotificationForm<T: NotificationRepresentable & PlanningEvent & Persisten
         Form {
             // Enabled
             if !isCreating {
-                Toggle("Enabled", isOn: $wrapper.model.isEnabled)
+                Toggle("Notification Enabled", isOn: $wrapper.model.isEnabled)
                     .tint(.accentColor)
                     .disabled(NotificationService.shared.locked)
             }

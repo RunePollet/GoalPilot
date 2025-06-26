@@ -94,7 +94,11 @@ final class Goal {
         
         guard let goal = (try? context.fetch(descriptor).first) else {
             let newGoal = Goal(title: "")
-            context.insert(newGoal)
+            do {
+                try context.transaction { context.insert(newGoal) }
+            } catch {
+                print("Goal insertion failed: \(error.localizedDescription)")
+            }
             return newGoal
         }
         
@@ -104,8 +108,11 @@ final class Goal {
     func delete(from modelContext: ModelContext, onboardingModel: OnboardingViewModel, globalModel: GlobalViewModel, plannerModel: PlannerViewModel, streakModel: StreakViewModel) {
         // Delete the goal
         isDeleted = true
-        modelContext.delete(self)
-        modelContext.saveChanges()
+        do {
+            try modelContext.transaction { modelContext.delete(self) }
+        } catch {
+            print("Goal deletion failed: \(error.localizedDescription)")
+        }
         
         // Reuse the onboarding
         onboardingModel.reuse()

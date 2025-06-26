@@ -16,7 +16,7 @@ struct Question3View: View {
     @State private var inputTitle = ""
     @State private var inputInfo: String?
     
-    @Query(sort: \Pillar.creationDate, animation: .smooth) private var pillars: [Pillar]
+    @Query(filter: #Predicate<Pillar> { !$0.isDeleted }, sort: \Pillar.creationDate, animation: .smooth) private var pillars: [Pillar]
     @FocusState private var focusedField: DualTextField.Field?
     
     var body: some View {
@@ -31,7 +31,7 @@ struct Question3View: View {
             focusedField = nil
         }
         .onboardingBottomBarSetter {
-            onboardingModel.nextButton = .init(isDisabled: { !pillars.allSatisfy({ $0.isConfigured }) || pillars.isEmpty })
+            onboardingModel.nextButton = .init(actionRequiredLabel: "Please add the title for at least one pillar by clicking the plus button before continuing.", isDisabled: { !pillars.allSatisfy({ $0.isConfigured }) || pillars.isEmpty })
         }
     }
     
@@ -48,7 +48,7 @@ struct Question3View: View {
                 newPillar.insert(into: modelContext)
                 
                 // Establish parent relationship
-                newPillar.parent = goal
+                newPillar.establishRelationship(for: \.parent, with: goal, within: modelContext)
                 
                 // Clean the text fields
                 inputTitle = ""
@@ -61,7 +61,7 @@ struct Question3View: View {
         
         return ListView(focusedField: focusedField, inputView: { inputView }, listContent: pillars) { pillar in
             ItemRow(title: pillar.title, info: pillar.info, removeCompletion: {
-                modelContext.delete(pillar)
+                pillar.delete(from: modelContext)
             })
             .background(MaterialBackground())
         }

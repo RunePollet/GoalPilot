@@ -25,18 +25,20 @@ struct OnboardingSequenceView: View {
                 // The onboarding views
                 views
                 
-                VStack {
-                    // Data required warning
-                    if onboardingModel.showDataRequiredWarning {
-                        dataRequiredWarning
+                if let nextButton = onboardingModel.nextButton {
+                    VStack {
+                        // Data required warning
+                        if onboardingModel.showDataRequiredWarning {
+                            dataRequiredWarning(nextButton: nextButton)
+                        }
+                        
+                        // Next button (shown here is there is a secondary button)
+                        if onboardingModel.secondaryButton != nil {
+                            self.nextButton(nextButton)
+                        }
                     }
-                    
-                    if let nextButton = onboardingModel.nextButton, let _ = onboardingModel.secondaryButton {
-                        // Next button
-                        self.nextButton(nextButton)
-                    }
+                    .frame(maxHeight: .infinity, alignment: .bottom)
                 }
-                .frame(maxHeight: .infinity, alignment: .bottom)
             }
             .toolbar {
                 toolbar
@@ -103,10 +105,11 @@ extension OnboardingSequenceView {
         }
     }
     
-    private var dataRequiredWarning: some View {
-        Text("Please add requested info before continuing.")
+    private func dataRequiredWarning(nextButton: OnboardingViewModel.BottomBarButton) -> some View {
+        Text(nextButton.actionRequiredLabel)
             .font(.caption2)
             .foregroundStyle(.white)
+            .multilineTextAlignment(.center)
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                     withAnimation {
@@ -132,8 +135,8 @@ extension OnboardingSequenceView {
             Text(nextButton.title)
                 .font(.title3)
                 .fontWeight(.black)
-                .foregroundStyle(.thinMaterial)
-                .opacity(nextButton.isDisabled() ? 0.3 : 1)
+                .foregroundStyle(.regularMaterial)
+                .opacity(nextButton.isDisabled() ? 0.1 : 1)
         }
         .switchingButtonStyles(apply: nextButton.isDisabled(), style1: .noAnimation)
     }

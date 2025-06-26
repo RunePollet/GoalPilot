@@ -21,6 +21,7 @@ struct Tile<Content: View>: View {
             Text(title)
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(.black)
+                .lineLimit(2)
             
             Spacer()
             

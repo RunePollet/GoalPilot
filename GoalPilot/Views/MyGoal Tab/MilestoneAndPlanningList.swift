@@ -95,7 +95,7 @@ struct MilestoneAndPlanningList: View {
                 
                 if editable {
                     Grabber()
-                        .milestoneRearrangeable(milestone: milestone, milestones: $milestones, dragItem: $dragItem)
+                        .rearrange(milestone: milestone, milestones: $milestones, dragItem: $dragItem)
                 }
             }
             .asListRow()

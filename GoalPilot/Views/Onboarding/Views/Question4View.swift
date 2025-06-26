@@ -31,7 +31,7 @@ struct Question4View: View {
             focusedField = nil
         }
         .onboardingBottomBarSetter {
-            onboardingModel.nextButton = .init(isDisabled: { !requirements.allSatisfy({ $0.isConfigured }) || requirements.isEmpty })
+            onboardingModel.nextButton = .init(actionRequiredLabel: "Please add the title for at least one requirement by clicking the plus button before continuing.", isDisabled: { !requirements.allSatisfy({ $0.isConfigured }) || requirements.isEmpty })
         }
     }
     
@@ -48,7 +48,7 @@ struct Question4View: View {
                 newRequirement.insert(into: modelContext)
                 
                 // Establish parent relationship
-                newRequirement.parent = goal
+                newRequirement.establishRelationship(for: \.parent, with: goal, within: modelContext)
                 
                 // Clean the text fields
                 inputTitle = ""

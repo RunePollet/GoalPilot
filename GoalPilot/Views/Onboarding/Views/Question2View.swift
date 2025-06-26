@@ -33,7 +33,7 @@ struct Question2View: View {
             keyboardDismissed()
         }
         .onboardingBottomBarSetter {
-            onboardingModel.nextButton = .init(isDisabled: { !goal.hasTitle })
+            onboardingModel.nextButton = .init(actionRequiredLabel: "Please add the title of your dream before continuing.", isDisabled: { !goal.hasTitle })
         }
     }
     

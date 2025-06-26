@@ -28,4 +28,9 @@ final class Requirement: Persistentable {
     
     // MARK: Persistentable
     var isConfigured: Bool { parent != nil && !title.isEmpty }
+    
+    static func descriptor() -> FetchDescriptor<Requirement> {
+        let predicate = #Predicate<Requirement> { !$0.isDeleted }
+        return FetchDescriptor(predicate: predicate)
+    }
 }

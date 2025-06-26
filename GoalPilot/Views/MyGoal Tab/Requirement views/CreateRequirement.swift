@@ -20,7 +20,7 @@ struct CreateRequirement: View {
             .navigationTitle("Add Requirement")
             .navigationBarTitleDisplayMode(.inline)
             .modelInserter(model: requirement, insertCompletion: {
-                requirement.parent = goal
+                requirement.establishRelationship(for: \.parent, with: goal, within: modelContext)
             })
     }
 }

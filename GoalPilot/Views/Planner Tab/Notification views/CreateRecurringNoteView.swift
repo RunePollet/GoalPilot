@@ -22,7 +22,7 @@ struct CreateRecurringNoteView: View {
             .navigationTitle("Add Recurring Note")
             .navigationBarTitleDisplayMode(.inline)
             .modelInserter(model: recurringNote, delay: 0.5, insertCompletion: {
-                recurringNote.parent = parent
+                recurringNote.establishRelationship(for: \.parent, with: parent, within: modelContext)
             })
     }
 }

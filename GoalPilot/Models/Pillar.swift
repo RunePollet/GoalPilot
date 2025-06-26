@@ -38,4 +38,9 @@ final class Pillar: Persistentable {
     
     // MARK: Persistentable
     var isConfigured: Bool { !title.isEmpty && parent != nil }
+    
+    static func descriptor() -> FetchDescriptor<Pillar> {
+        let predicate = #Predicate<Pillar> { !$0.isDeleted }
+        return FetchDescriptor(predicate: predicate)
+    }
 }

@@ -25,26 +25,30 @@ private struct DragReader: ViewModifier {
         let dragGesture = DragGesture()
             .onChanged { value in
                 if isEnabled {
-                    offset = value.translation
+                    update(value.translation)
                 }
             }
             .onEnded { _ in
                 if isEnabled {
-                    isDragging = false
-                    offset = .zero
-                    onEnded()
+                    end()
                 }
             }
         
         let longPressGesture = LongPressGesture(minimumDuration: 0.5, maximumDistance: 50)
             .onEnded { _ in
                 if isEnabled {
-                    isDragging = true
-                    onStarted()
+                    start()
                 }
             }
         
-        let combinedGesture = SequenceGesture(longPressGesture, dragGesture)
+        let tapGesture = TapGesture()
+            .onEnded { _ in
+                if isEnabled {
+                    end()
+                }
+            }
+        
+        let combinedGesture = SequenceGesture(longPressGesture, dragGesture.simultaneously(with: tapGesture))
         
         content
             .anchorPreference(key: AnchorPreference.self, value: .bounds, transform: { anchor in
@@ -77,6 +81,20 @@ private struct DragReader: ViewModifier {
             .simultaneousGesture(combinedGesture)
     }
     
+    func start() {
+        isDragging = true
+        onStarted()
+    }
+    
+    func update(_ translation: CGSize) {
+        offset = translation
+    }
+    
+    func end() {
+        isDragging = false
+        offset = .zero
+        onEnded()
+    }
 }
 
 // Preference key for the anchor of the content

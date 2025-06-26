@@ -9,6 +9,7 @@ import SwiftUI
 
 /// Creates an activity.
 struct CreateActivityView: View {
+    @Environment(\.modelContext) private var modelContext
     @Environment(StreakViewModel.self) private var streakModel
     @Environment(PlannerViewModel.self) private var plannerModel
     @Environment(NavigationViewModel.self) private var navigationModel
@@ -21,7 +22,7 @@ struct CreateActivityView: View {
             .navigationTitle("Add Activity")
             .navigationBarTitleDisplayMode(.inline)
             .modelInserter(model: activity, delay: 0.5, insertCompletion: {
-                activity.parent = parent
+                activity.establishRelationship(for: \.parent, with: parent, within: modelContext)
             }, doneCompletion: {
                 if let currentPlanning = plannerModel.currentPlanning {
                     streakModel.checkStreakIncreaser(currentPlanning: currentPlanning)

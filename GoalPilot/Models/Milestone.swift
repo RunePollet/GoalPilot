@@ -47,11 +47,17 @@ final class Milestone: Persistentable {
     
     // MARK: Accessibilities
     static func updateOrderIndices(in modelContext: ModelContext) {
-        let milestones = Self.getAll(from: modelContext).reversed()
-        var counter = 1
-        milestones.forEach { milestone in
-            milestone.orderIndex = counter
-            counter += 1
+        do {
+            try modelContext.transaction {
+                let milestones = Self.getAll(from: modelContext).reversed()
+                var counter = 1
+                milestones.forEach { milestone in
+                    milestone.orderIndex = counter
+                    counter += 1
+                }
+            }
+        } catch {
+            print("Failed to update order indices of milestones: \(error.localizedDescription)")
         }
     }
     
@@ -73,8 +79,11 @@ final class Milestone: Persistentable {
         let goal = Goal.get(from: modelContext)
         self.orderIndex = goal.highestOrderIndex+1
         
-        modelContext.insert(self)
-        modelContext.saveChanges()
+        do {
+            try modelContext.transaction { modelContext.insert(self) }
+        } catch {
+            print("Milestone insertion failed: \(error.localizedDescription)")
+        }
         
         Self.updateOrderIndices(in: modelContext)
     }
@@ -82,17 +91,21 @@ final class Milestone: Persistentable {
     func delete(from modelContext: ModelContext) {
         isDeleted = true
         
-        modelContext.delete(self)
+        do {
+            try modelContext.transaction { modelContext.delete(self) }
+        } catch {
+            print("Milestone deletion failed: \(error.localizedDescription)")
+        }
         
         Self.updateOrderIndices(in: modelContext)
     }
     
     /// Returns a fetch descriptor to fetch all relevant milestones.
+    var isConfigured: Bool { !title.isEmpty && parent != nil }
+    
     static func descriptor() -> FetchDescriptor<Milestone> {
         let onlyPersisted = #Predicate<Milestone> { !$0.isDeleted }
         let orderIndexReversed = SortDescriptor(\Milestone.orderIndex, order: .reverse)
         return FetchDescriptor<Milestone>(predicate: onlyPersisted, sortBy: [orderIndexReversed])
     }
-    
-    var isConfigured: Bool { !title.isEmpty && parent != nil }
 }
