@@ -63,7 +63,7 @@ struct MilestoneForm: View {
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    }, title: "Select pillars to attach")
+                    }, title: "Select pillars", subject: milestone.title != "" ? milestone.title : nil)
                 }
             } header: {
                 Text("Attached Pillars")

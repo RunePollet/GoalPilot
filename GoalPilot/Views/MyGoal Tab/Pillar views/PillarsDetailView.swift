@@ -32,14 +32,6 @@ struct PillarsDetailView: View {
                     .padding(.top)
                     .frame(maxHeight: .infinity, alignment: .top)
             }
-            
-            // Add tile
-            IconTile(icon: "plus", sizeFactor: 45/393, stretchVertically: false) {
-                createPillar = true
-            }
-            .padding()
-            .padding(.top)
-            .frame(maxHeight: .infinity, alignment: .top)
         }
         .tabViewStyle(.page(indexDisplayMode: .always))
         .indexViewStyle(.page(backgroundDisplayMode: .always))
@@ -65,7 +57,13 @@ struct PillarsDetailView: View {
     
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
-        ToolbarItem(placement: .primaryAction) {
+        ToolbarItemGroup(placement: .primaryAction) {
+            Button {
+                createPillar = true
+            } label: {
+                Image(systemName: "plus")
+            }
+            
             NavigationLink(value: Destination.settings) {
                 Image(systemName: "gear")
             }

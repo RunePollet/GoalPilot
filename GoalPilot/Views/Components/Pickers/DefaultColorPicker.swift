@@ -11,26 +11,33 @@ struct DefaultColorPicker: View {
     @Environment(\.dismiss) private var dismiss
     
     @Binding var selection: DefaultColor?
+    var subject: String?
     
     var body: some View {
         Form {
-            ForEach(DefaultColor.allCases) { defaultColor in
-                Button {
-                    selection = defaultColor
-                    dismiss()
-                } label: {
-                    HStack {
-                        Text(defaultColor.description.capitalized)
-                        Spacer()
-                        Circle()
-                            .foregroundStyle(defaultColor.color)
-                            .frame(height: 25)
-                        Image(systemName: "checkmark")
-                            .foregroundStyle(Color.accentColor)
-                            .opacity(selection == defaultColor ? 1 : 0)
+            Section {
+                ForEach(DefaultColor.allCases) { defaultColor in
+                    Button {
+                        selection = defaultColor
+                        dismiss()
+                    } label: {
+                        HStack {
+                            Text(defaultColor.description.capitalized)
+                            Spacer()
+                            Circle()
+                                .foregroundStyle(defaultColor.color)
+                                .frame(height: 25)
+                            Image(systemName: "checkmark")
+                                .foregroundStyle(Color.accentColor)
+                                .opacity(selection == defaultColor ? 1 : 0)
+                        }
                     }
+                    .buttonStyle(.tappable)
                 }
-                .buttonStyle(.tappable)
+            } header: {
+                if let subject {
+                    Text("Choosing for: \(subject)")
+                }
             }
         }
         .navigationTitle("Default Colors")

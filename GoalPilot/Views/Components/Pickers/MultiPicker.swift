@@ -17,6 +17,7 @@ struct MultiPicker<Value: Equatable, Label: View, Row: View>: View {
     var contentRow: (Value) -> Row
     var label: () -> Label
     var title: String?
+    var subject: String?
     var footer: String?
     
     // View coordination
@@ -25,7 +26,7 @@ struct MultiPicker<Value: Equatable, Label: View, Row: View>: View {
     @State private var removed: [Selectable] = []
     @State private var added: [Selectable] = []
     
-    init(showing: (Binding<Bool>)? = nil, content: [Value], selection: Binding<[Value]>, contentRow: @escaping (Value) -> Row, label: @escaping () -> Label, title: String? = nil, footer: String? = nil) {
+    init(showing: (Binding<Bool>)? = nil, content: [Value], selection: Binding<[Value]>, contentRow: @escaping (Value) -> Row, label: @escaping () -> Label, title: String? = nil, subject: String? = nil, footer: String? = nil) {
         self._showing = showing ?? .constant(false)
         self.content = content
         self.selectables = content.map { Selectable(value: $0, isSelected: selection.wrappedValue.contains($0)) }
@@ -33,6 +34,7 @@ struct MultiPicker<Value: Equatable, Label: View, Row: View>: View {
         self.contentRow = contentRow
         self.label = label
         self.title = title
+        self.subject = subject
         self.footer = footer
     }
     
@@ -73,6 +75,10 @@ struct MultiPicker<Value: Equatable, Label: View, Row: View>: View {
                             }
                         }
                         .buttonStyle(.tappable)
+                    }
+                } header: {
+                    if let subject {
+                        Text("Choosing for: \(subject)")
                     }
                 } footer: {
                     if let footer {

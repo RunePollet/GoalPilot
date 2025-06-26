@@ -91,7 +91,7 @@ struct ActivityForm: View {
             }
             .sheet(isPresented: $showDefaultColors) {
                 NavigationStack {
-                    DefaultColorPicker(selection: .init(get: { activity.defaultColor }, set: { activity.defaultColor = $0 }))
+                    DefaultColorPicker(selection: .init(get: { activity.defaultColor }, set: { activity.defaultColor = $0 }), subject: activity.subtitle != "" ? activity.subtitle : nil)
                 }
             }
             .confirmationDialog("This action cannot be undone", isPresented: $showRemoveDialog) {

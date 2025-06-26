@@ -95,7 +95,7 @@ struct NotificationForm<T: NotificationRepresentable & PlanningEvent & Persisten
         }
         .sheet(isPresented: $showDefaultColors) {
             NavigationStack {
-                DefaultColorPicker(selection: $wrapper.model.defaultColor)
+                DefaultColorPicker(selection: $wrapper.model.defaultColor, subject: wrapper.model.subtitle != "" ? wrapper.model.subtitle : nil)
             }
         }
         .confirmationDialog("This cannot be undone", isPresented: $showRemoveDialog) {

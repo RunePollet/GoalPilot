@@ -104,8 +104,20 @@ struct GoalSummary: View {
             }
             
             // Add tile
-            IconTile(icon: "plus", sizeFactor: 30/393) {
+            Button {
                 createPillar = true
+            } label: {
+                Image(systemName: "plus")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundStyle(Color.accentColor)
+                    .frame(width: pct(30/393, of: .width), height: pct(30/393, of: .height))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .foregroundStyle(Color(uiColor: .secondarySystemGroupedBackground))
+                            .tileShadow()
+                    )
             }
         }
         .padding(.bottom)

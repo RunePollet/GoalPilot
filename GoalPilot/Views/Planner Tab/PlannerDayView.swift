@@ -79,6 +79,7 @@ struct PlannerDayView: View {
                 .background(Color(uiColor: .systemGroupedBackground))
         }
         .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.large)
         .editToolbar(isEditing: $navigationModel.isEditing, showEditButton: !navigationModel.hideEditButton, showAddButton: true) {
             showAddDialog = true
         }
