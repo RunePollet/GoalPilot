@@ -26,20 +26,26 @@ struct EndOnboardingView: View {
             
             Spacer()
         }
-        .onboardingBottomBarSetter {
-            onboardingModel.nextButton = .init(title: "Let's go!", action: .completionOnly, completion: {
-                if goal.isConfigured {
-                    onboardingModel.dismissOnboarding {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            globalModel.showFirstPlanningCreationSheet(includeAlert: true)
-                        }
+        .onboardingBottomBar(
+            nextButton: nil,
+            primaryButton: .init(title: "Let's go!", action: {
+                dismiss {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        globalModel.showFirstPlanningCreationSheet(includeAlert: true)
                     }
                 }
-                else {
-                    WindowService.window()?.presentAlert(.goalNotConfigured)
-                }
-            })
-            onboardingModel.secondaryButton = .init(title: "Do later", action: .dismiss)
+            }),
+            secondaryButton: .init(title: "Do later", action: { dismiss() })
+        )
+    }
+    
+    func dismiss(completion: (() -> Void)? = nil) {
+        modelContext.saveChanges()
+        if goal.isConfigured {
+            onboardingModel.dismissOnboarding(completion: completion)
+        }
+        else {
+            WindowService.window()?.presentAlert(.goalNotConfigured)
         }
     }
 }

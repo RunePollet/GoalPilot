@@ -19,10 +19,7 @@ class OnboardingViewModel: Persistent {
     private(set) var isOnboarding: Bool = true
     var isBeingReused = false
     
-    var bottomBarSetter: (() -> Void)?
-    var nextButton: BottomBarButton?
-    var secondaryButton: BottomBarButton?
-    var showDataRequiredWarning: Bool = false
+    var toolbars: [Views: OnboardingToolbar] = [:]
     
     // Navigation
     private(set) var currentView: OnboardingViewModel.Views = .welcome
@@ -83,7 +80,6 @@ extension OnboardingViewModel {
         if let nextView = Views(rawValue: currentView.rawValue+1) {
             pushEdge = .trailing
             animateView(nextView: nextView)
-            updateBottomBar(transitionForward: true)
         }
     }
     
@@ -92,7 +88,6 @@ extension OnboardingViewModel {
         if let previousView = Views(rawValue: currentView.rawValue-1) {
             pushEdge = .leading
             animateView(nextView: previousView)
-            updateBottomBar(transitionForward: false)
         }
     }
     
@@ -113,54 +108,47 @@ extension OnboardingViewModel {
     }
 }
 
-// Accessors for the bottom bar properties
+// Accessors for the tool bar properties
 extension OnboardingViewModel {
-    /// A model that describes a bottom bar button in the onboarding sequence.
-    struct BottomBarButton: Equatable {
-        enum Action {
-            case next, dismiss, completionOnly
-        }
+    /// An object that describes a toolbar in the onboarding sequence.
+    struct OnboardingToolbar: Equatable {
+        var id: UUID = UUID()
+        var nextButton: NextButton?
+        var primaryButton: BottomBarButton?
+        var secondaryButton: BottomBarButton?
+        var infoButton: (() -> Void)?
         
-        var title: String = "Next"
-        var action: Self.Action = .next
-        var actionRequiredLabel: String = "Please add requested info before continuing."
-        var completion: (() -> Void)? = nil
-        var isDisabled: () -> Bool = { false }
-        
-        @MainActor
-        func performAction(goal: Goal, onboardingModel: OnboardingViewModel, modelContext: ModelContext) {
-            completion?()
-            
-            if action == .next {
-                onboardingModel.nextView()
-            } else if action == .dismiss {
-                modelContext.saveChanges()
-                if goal.isConfigured {
-                    onboardingModel.dismissOnboarding()
-                }
-                else {
-                    WindowService.window()?.presentAlert(.goalNotConfigured)
-                }
-            }
-        }
-        
-        static func == (lhs: BottomBarButton, rhs: BottomBarButton) -> Bool {
-            lhs.title == rhs.title && lhs.isDisabled() == rhs.isDisabled()
+        static func == (lhs: OnboardingToolbar, rhs: OnboardingToolbar) -> Bool {
+            lhs.id == rhs.id
         }
     }
     
-    /// Updates the bottom bar buttons to the current view.
-    @MainActor
-    func updateBottomBar(transitionForward: Bool = false) {
-        withAnimation {
-            nextButton = nil
-            secondaryButton = nil
-        } completion: {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
-                withAnimation(.easeInOut(duration: 0.8).delay(self.currentView == .reward && transitionForward ? 0.8 : 0)) {
-                    self.bottomBarSetter?()
-                }
-            }
+    /// An object that describes a next button in the onboarding sequence.
+    struct NextButton: Equatable {
+        var id: UUID = UUID()
+        var title: String = "Next"
+        var isDisabled: () -> Bool = { false }
+        var completion: (() -> Void)?
+        
+        static func == (lhs: NextButton, rhs: NextButton) -> Bool {
+            lhs.id == rhs.id
+        }
+    }
+    
+    /// An object that describes a bottom bar button in the onboarding sequence.
+    struct BottomBarButton: Equatable {
+        enum Style {
+            case primary, secondary
+        }
+        
+        var id: UUID = UUID()
+        var title: String = "Next"
+        var style: Self.Style = .primary
+        var action: () -> Void
+        var isDisabled: () -> Bool = { false }
+        
+        static func == (lhs: BottomBarButton, rhs: BottomBarButton) -> Bool {
+            lhs.id == rhs.id
         }
     }
 }

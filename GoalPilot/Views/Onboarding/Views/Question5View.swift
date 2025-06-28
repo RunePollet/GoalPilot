@@ -14,6 +14,7 @@ struct Question5View: View {
     @Environment(GlobalViewModel.self) private var globalModel
     
     @FocusState private var isFocused
+    @State private var showSheet = false
     
     var body: some View {
         QuestionViewLayout(
@@ -27,8 +28,14 @@ struct Question5View: View {
             goal.chosenWay = goal.chosenWay.trimmingCharacters(in: .whitespacesAndNewlines)
             isFocused = false
         }
-        .onboardingBottomBarSetter {
-            onboardingModel.nextButton = .init(isDisabled: { !goal.hasChosenWay })
+        .onboardingBottomBar(
+            nextButton: .init(isDisabled: { !goal.hasChosenWay }),
+            infoButton: {
+                showSheet = true
+            }
+        )
+        .sheet(isPresented: $showSheet) {
+            sheet
         }
     }
     
@@ -41,15 +48,14 @@ struct Question5View: View {
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal)
     }
-}
-
-// Elements for the sheet
-extension Question5View {
-    static var sheetView: some View {
-        SheetViewLayout(mode: .example, title: "In what way would you\nprefer to obtain this?") {
-            // Custom Section
-            ExampleRow(text: "I’d like to earn money doing photography. Travel the world whilst capturing beautiful moments and landscapes. Earning money by selling my photos, funding and social media.")
-                .padding(.horizontal)
+    
+    private var sheet: some View {
+        NavigationStack {
+            SheetViewLayout(mode: .example, title: "In what way would you\nprefer to obtain this?") {
+                // Custom Section
+                ExampleRow(text: "I’d like to earn money doing photography. Travel the world whilst capturing beautiful moments and landscapes. Earning money by selling my photos, funding and social media.")
+                    .padding(.horizontal)
+            }
         }
     }
 }

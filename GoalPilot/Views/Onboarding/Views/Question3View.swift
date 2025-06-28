@@ -18,6 +18,7 @@ struct Question3View: View {
     
     @Query(filter: #Predicate<Pillar> { !$0.isDeleted }, sort: \Pillar.creationDate, animation: .smooth) private var pillars: [Pillar]
     @FocusState private var focusedField: DualTextField.Field?
+    @State private var showSheet = false
     
     var body: some View {
         QuestionViewLayout(
@@ -30,8 +31,14 @@ struct Question3View: View {
         .dismissKeyboardArea {
             focusedField = nil
         }
-        .onboardingBottomBarSetter {
-            onboardingModel.nextButton = .init(actionRequiredLabel: "Please add the title for at least one pillar by clicking the plus button before continuing.", isDisabled: { !pillars.allSatisfy({ $0.isConfigured }) || pillars.isEmpty })
+        .onboardingBottomBar(
+            nextButton: .init(isDisabled: { !pillars.allSatisfy({ $0.isConfigured }) || pillars.isEmpty }),
+            infoButton: {
+                showSheet = true
+            }
+        )
+        .sheet(isPresented: $showSheet) {
+            sheet
         }
     }
     
@@ -67,26 +74,24 @@ struct Question3View: View {
         }
         .padding(.horizontal)
     }
-}
-
-// Elements for the sheet
-extension Question3View {
-    static var sheetView: some View {
-        SheetViewLayout(mode: .example, title: "On what pillars does your goal rest?") {
-            // Custom Section
-            VStack(spacing: 10) {
-                ExampleRow(text: "Earn money passively")
-                
-                ExampleRow(text: "Have a partner and start a family")
-                
-                ExampleUnfoldedRow(title: "Own my dream mansion", info: "I would like it to be in a quiet place, like the countryside.")
-                
-                ExampleUnfoldedRow(title: "Own my dream cars", info: "I’d like to own a Porsche 911 and an Aston Martin DBX.")
-                
-                ExampleRow(text: "Own a vacationhouse in the south of France")
+    
+    private var sheet: some View {
+        NavigationStack {
+            SheetViewLayout(mode: .example, title: "On what pillars does your goal rest?") {
+                // Custom Section
+                VStack(spacing: 10) {
+                    ExampleRow(text: "Earn money passively")
+                    
+                    ExampleRow(text: "Have a partner and start a family")
+                    
+                    ExampleUnfoldedRow(title: "Own my dream mansion", info: "I would like it to be in a quiet place, like the countryside.")
+                    
+                    ExampleUnfoldedRow(title: "Own my dream cars", info: "I’d like to own a Porsche 911 and an Aston Martin DBX.")
+                    
+                    ExampleRow(text: "Own a vacationhouse in the south of France")
+                }
+                .padding(.horizontal)
             }
-            .padding(.horizontal)
         }
     }
-    
 }

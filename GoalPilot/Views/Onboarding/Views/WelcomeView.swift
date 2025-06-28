@@ -40,9 +40,9 @@ struct WelcomeView: View {
         .dismissKeyboardArea {
             focused = false
         }
-        .onboardingBottomBarSetter {
-            onboardingModel.nextButton = .init(title: "Next", isDisabled: { textService.username.isEmpty })
-        }
+        .onboardingBottomBar(
+            nextButton: .init(title: "Next", isDisabled: { textService.username.isEmpty })
+        )
         .onAppear {
             self.givenName = textService.username.trimmingCharacters(in: .whitespaces)
         }

@@ -19,6 +19,7 @@ struct Question2View: View {
     }
     
     @FocusState private var focusedField: Self.Field?
+    @State private var showSheet = false
     
     var body: some View {
         QuestionViewLayout(
@@ -32,8 +33,15 @@ struct Question2View: View {
             focusedField = nil
             keyboardDismissed()
         }
-        .onboardingBottomBarSetter {
-            onboardingModel.nextButton = .init(actionRequiredLabel: "Please add the title of your dream before continuing.", isDisabled: { !goal.hasTitle })
+        .onboardingBottomBar(
+            nextButton: .init(isDisabled: { !goal.hasTitle }),
+            infoButton: {
+                print(showSheet)
+                showSheet = true
+            }
+        )
+        .sheet(isPresented: $showSheet) {
+            sheet
         }
     }
     
@@ -71,24 +79,23 @@ struct Question2View: View {
         }
     }
     
+    private var sheet: some View {
+        NavigationStack {
+            SheetViewLayout(mode: .example, title: "Try to describe your goal\nand your dream") {
+                // Custom Section
+                VStack(spacing: 20) {
+                    ExampleRow(text: "Be financially free and live my dream life")
+                    
+                    ExampleRow(text: "I’d like to never worry about money, drive a Porsche and an Aston Martin SUV. I want to own my dream house in a quiet place, have a partner and start a family. I will also still be in contact with all my best friends and make many new friends. I’ll travel a lot and visit different places while making money. I’ll also own a vacation home in the south of France.")
+                }
+                .foregroundStyle(Color.secondary)
+                .padding(.horizontal)
+            }
+        }
+    }
+    
     func keyboardDismissed() {
         goal.title = goal.title.trimmingCharacters(in: .whitespaces)
         goal.info = goal.info?.trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-}
-
-// Elements for the sheet
-extension Question2View {
-    static var sheetView: some View {
-        SheetViewLayout(mode: .example, title: "Try to describe your goal\nand your dream") {
-            // Custom Section
-            VStack(spacing: 20) {
-                ExampleRow(text: "Be financially free and live my dream life")
-                
-                ExampleRow(text: "I’d like to never worry about money, drive a Porsche and an Aston Martin SUV. I want to own my dream house in a quiet place, have a partner and start a family. I will also still be in contact with all my best friends and make many new friends. I’ll travel a lot and visit different places while making money. I’ll also own a vacation home in the south of France.")
-            }
-            .foregroundStyle(Color.secondary)
-            .padding(.horizontal)
-        }
     }
 }

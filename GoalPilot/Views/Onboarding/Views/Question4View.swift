@@ -18,6 +18,7 @@ struct Question4View: View {
     
     @Query(Requirement.descriptor(), animation: .smooth) private var requirements: [Requirement]
     @FocusState private var focusedField: DualTextField.Field?
+    @State private var showSheet = false
     
     var body: some View {
         QuestionViewLayout(
@@ -30,8 +31,14 @@ struct Question4View: View {
         .dismissKeyboardArea {
             focusedField = nil
         }
-        .onboardingBottomBarSetter {
-            onboardingModel.nextButton = .init(actionRequiredLabel: "Please add the title for at least one requirement by clicking the plus button before continuing.", isDisabled: { !requirements.allSatisfy({ $0.isConfigured }) || requirements.isEmpty })
+        .onboardingBottomBar(
+            nextButton: .init(isDisabled: { !requirements.allSatisfy({ $0.isConfigured }) || requirements.isEmpty }),
+            infoButton: {
+                showSheet = true
+            }
+        )
+        .sheet(isPresented: $showSheet) {
+            sheet
         }
     }
     
@@ -67,21 +74,20 @@ struct Question4View: View {
         }
         .padding(.horizontal)
     }
-}
-
-// Elements for the sheet
-extension Question4View {
-    static var sheetView: some View {
-        SheetViewLayout(mode: .example, title: "What is required to achieve this?") {
-            // Custom Section
-            VStack(spacing: 10) {
-                ExampleUnfoldedRow(title: "Money", info: "I’ll need to earn enough money to be able to afford all my pillars and never worry about money.")
-                
-                ExampleUnfoldedRow(title: "Smart investments", info: "Through enough smart investments I’ll be able to earn passive income.")
-                
-                ExampleRow(text: "A loving partner.")
+    
+    private var sheet: some View {
+        NavigationStack {
+            SheetViewLayout(mode: .example, title: "What is required to achieve this?") {
+                // Custom Section
+                VStack(spacing: 10) {
+                    ExampleUnfoldedRow(title: "Money", info: "I’ll need to earn enough money to be able to afford all my pillars and never worry about money.")
+                    
+                    ExampleUnfoldedRow(title: "Smart investments", info: "Through enough smart investments I’ll be able to earn passive income.")
+                    
+                    ExampleRow(text: "A loving partner.")
+                }
+                .padding(.horizontal)
             }
-            .padding(.horizontal)
         }
     }
 }

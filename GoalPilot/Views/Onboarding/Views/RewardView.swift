@@ -25,9 +25,7 @@ struct RewardView: View {
                 opacity = 1
             }
         }
-        .onboardingBottomBarSetter {
-            onboardingModel.nextButton = .init(title: "Next")
-        }
+        .onboardingBottomBar(nextButton: .init(title: "Next"))
     }
     
     private var customSection: some View {

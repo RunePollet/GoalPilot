@@ -191,6 +191,7 @@ private struct AttributesItemRow<Attribute: Equatable>: View {
                                         .padding(style: .textField)
                                 },
                                 title: pickerTitle,
+                                subject: title != "" ? title : nil,
                                 footer: pickerFooter
                             )
                         }

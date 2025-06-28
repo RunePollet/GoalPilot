@@ -35,8 +35,6 @@ struct IntroView: View {
         .foregroundStyle(Color.white)
         .frame(maxHeight: .infinity, alignment: .top)
         .padding(.horizontal)
-        .onboardingBottomBarSetter {
-            onboardingModel.nextButton = .init(title: "Let's Go!")
-        }
+        .onboardingBottomBar(nextButton: .init(title: "Let's Go!"))
     }
 }

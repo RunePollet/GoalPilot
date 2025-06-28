@@ -12,9 +12,14 @@ struct OnboardingSequenceView: View {
     @Environment(Goal.self) private var goal
     @Environment(OnboardingViewModel.self) private var onboardingModel
     
-    @State private var showSheet = false
+    // View coordination
     @State private var starProgress: CGFloat = 0
     @State private var winkTrigger = false
+    
+    // Accessibility
+    private var currentToolbar: OnboardingViewModel.OnboardingToolbar? {
+        onboardingModel.toolbars[onboardingModel.currentView]
+    }
     
     // Impact feedback
     @State private var rigidFeedback = false
@@ -25,19 +30,10 @@ struct OnboardingSequenceView: View {
                 // The onboarding views
                 views
                 
-                if let nextButton = onboardingModel.nextButton {
-                    VStack {
-                        // Data required warning
-                        if onboardingModel.showDataRequiredWarning {
-                            dataRequiredWarning(nextButton: nextButton)
-                        }
-                        
-                        // Next button (shown here is there is a secondary button)
-                        if onboardingModel.secondaryButton != nil {
-                            self.nextButton(nextButton)
-                        }
-                    }
-                    .frame(maxHeight: .infinity, alignment: .bottom)
+                // Next button (shown here if there is a secondary button)
+                if let primaryButton = currentToolbar?.primaryButton, currentToolbar?.secondaryButton != nil {
+                    self.primaryButton(primaryButton)
+                        .frame(maxHeight: .infinity, alignment: .bottom)
                 }
             }
             .toolbar {
@@ -48,9 +44,6 @@ struct OnboardingSequenceView: View {
             }
             .overlay {
                 overlay
-            }
-            .sheet(isPresented: $showSheet) {
-                sheetViews
             }
         }
     }
@@ -105,77 +98,14 @@ extension OnboardingSequenceView {
         }
     }
     
-    private func dataRequiredWarning(nextButton: OnboardingViewModel.BottomBarButton) -> some View {
-        Text(nextButton.actionRequiredLabel)
-            .font(.caption2)
-            .foregroundStyle(.white)
-            .multilineTextAlignment(.center)
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    withAnimation {
-                        onboardingModel.showDataRequiredWarning = false
-                    }
-                }
-            }
-    }
-    
-    private func nextButton(_ nextButton: OnboardingViewModel.BottomBarButton) -> some View {
-        Button {
-            if nextButton.isDisabled() {
-                // Notify the user
-                if !onboardingModel.showDataRequiredWarning {
-                    withAnimation {
-                        onboardingModel.showDataRequiredWarning = true
-                    }
-                }
-            } else {
-                nextButton.performAction(goal: goal, onboardingModel: onboardingModel, modelContext: modelContext)
-            }
-        } label: {
-            Text(nextButton.title)
-                .font(.title3)
-                .fontWeight(.black)
-                .foregroundStyle(.regularMaterial)
-                .opacity(nextButton.isDisabled() ? 0.1 : 1)
-        }
-        .switchingButtonStyles(apply: nextButton.isDisabled(), style1: .noAnimation)
-    }
-    
-    /// The view to show in the sheet of each view.
-    private var sheetViews: some View {
-        NavigationStack {
-            switch onboardingModel.currentView {
-            case .question1:
-                Question1View.sheetView
-                
-            case .question2:
-                Question2View.sheetView
-                
-            case .question3:
-                Question3View.sheetView
-                
-            case .question4:
-                Question4View.sheetView
-                
-            case .question5:
-                Question5View.sheetView
-                
-            case .question6:
-                Question6View.sheetView
-                
-            default:
-                Color.clear
-            }
-        }
-    }
-    
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
         // Back button
         ToolbarItem(placement: .navigation) {
             Button {
-                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                onboardingModel.previousView()
+                resignFirstResponder(beforeRunning: {
+                    onboardingModel.previousView()
+                }, withDelay: 0.4)
             } label: {
                 HStack(spacing: 3) {
                     Image(systemName: "chevron.left")
@@ -186,35 +116,65 @@ extension OnboardingSequenceView {
             }
         }
         
-        // Sheet button
+        // Next button
         ToolbarItem(placement: .primaryAction) {
-            Button {
-                showSheet = true
-            } label: {
-                Text(onboardingModel.currentView.rawValue <= OnboardingViewModel.Views.question1.rawValue ? "Get Inspiration" : "Example")
-                    .frame(width: 115, alignment: .trailing)
-                    .opacity(onboardingModel.currentView.rawValue > 2 && onboardingModel.currentView.rawValue < 9 ? 1 : 0)
+            ZStack {
+                if let nextButton = currentToolbar?.nextButton {
+                    Button {
+                        resignFirstResponder(beforeRunning: {
+                            onboardingModel.nextView()
+                            nextButton.completion?()
+                        }, withDelay: 0.4)
+                    } label: {
+                        Text(nextButton.title)
+                            .bold()
+                            .frame(width: 100, alignment: .trailing)
+                    }
+                    .disabled(nextButton.isDisabled())
+                }
             }
         }
         
         // Bottom bar
-        ToolbarItem(placement: .bottomBar) {
+        ToolbarItemGroup(placement: .bottomBar) {
             ZStack {
-                if let secondaryButton = onboardingModel.secondaryButton {
+                if let secondaryButton = currentToolbar?.secondaryButton {
                     // Secondary Button
                     Button {
-                        secondaryButton.performAction(goal: goal, onboardingModel: onboardingModel, modelContext: modelContext)
+                        secondaryButton.action()
                     } label: {
                         Text(secondaryButton.title)
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.thinMaterial)
+                            .font(secondaryButton.style == .primary ? .title3 : .body)
+                            .fontWeight(secondaryButton.style == .primary ? .semibold : .regular)
+                            .foregroundStyle(.regularMaterial)
                     }
-                } else if let nextButton = onboardingModel.nextButton {
-                    self.nextButton(nextButton)
+                } else if let primaryButton = currentToolbar?.primaryButton {
+                    self.primaryButton(primaryButton)
+                }
+            }
+            
+            if let infoButton = currentToolbar?.infoButton {
+                Button {
+                    infoButton()
+                } label: {
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(.regularMaterial)
                 }
             }
         }
+    }
+    
+    private func primaryButton(_ primaryButton: OnboardingViewModel.BottomBarButton) -> some View {
+        Button {
+            primaryButton.action()
+        } label: {
+            Text(primaryButton.title)
+                .font(primaryButton.style == .primary ? .title3 : .body)
+                .fontWeight(primaryButton.style == .primary ? .black : .regular)
+                .foregroundStyle(.regularMaterial)
+                .opacity(primaryButton.isDisabled() ? 0.1 : 1)
+        }
+        .disabled(primaryButton.isDisabled())
     }
     
     private var background: some View {
@@ -356,6 +316,18 @@ extension OnboardingSequenceView {
                     starProgress = 1
                 }
             }
+        }
+    }
+    
+    private func resignFirstResponder(beforeRunning completion: @escaping () -> Void, withDelay delay: TimeInterval) {
+        let currentFirstResponder: Bool = UIResponder.currentFirstResponder != nil
+        if currentFirstResponder {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
+        
+        // Wait for first responder to resign
+        DispatchQueue.main.asyncAfter(deadline: .now() + (currentFirstResponder ? delay : 0.0)) {
+            completion()
         }
     }
 }

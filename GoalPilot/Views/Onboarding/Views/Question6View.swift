@@ -18,6 +18,7 @@ struct Question6View: View {
     
     // View coordination
     @FocusState private var focusedField: DualTextField.Field?
+    @State private var showSheet = false
     @State private var dragItem: Milestone? = nil
     @State private var refInputHeight: CGFloat = 0
     @State private var curInputHeight: CGFloat = 0
@@ -37,8 +38,14 @@ struct Question6View: View {
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .dismissKeyboardArea { focusedField = nil }
-        .onboardingBottomBarSetter {
-            onboardingModel.nextButton = .init(actionRequiredLabel: "Please add the title for at least one milestone by clicking the plus button before continuing.", isDisabled: { !persistedMilestones.filter { !$0.isConfigured }.isEmpty || persistedMilestones.isEmpty })
+        .onboardingBottomBar(
+            nextButton: .init(isDisabled: { !persistedMilestones.filter { !$0.isConfigured }.isEmpty || persistedMilestones.isEmpty }),
+            infoButton: {
+                showSheet = true
+            }
+        )
+        .sheet(isPresented: $showSheet) {
+            sheet
         }
         .onAppear {
             milestones = persistedMilestones
@@ -92,31 +99,30 @@ struct Question6View: View {
         .rearrangeable()
         .scrollDisabled(dragItem != nil)
     }
-}
-
-// Elements for the sheet
-extension Question6View {
-    static var sheetView: some View {
-        SheetViewLayout(mode: .example, title: "What milestones do you need\nto achieve first?", titlePadding: 20/852) {
-            // Custom Section
-            ScrollView {
-                ExampleUnfoldedMilestoneRow(orderIndex: 7, title: "Being successful with my photos", info: "So I can sell them to also earn money, getting sponsored, ... and start investing.", attributes: ["Earn money passively.", "Own my dream mansion.", "Own my dream cars.", "Own a vacationhouse in the south of France."], noneSelectedTitle: nil)
-                
-                ExampleUnfoldedMilestoneRow(orderIndex: 6, title: "Having grown on social media", info: "Attaining a good reputation and earning some money with it, mostly on social media.", attributes: ["Earn money passively.", "Own my dream mansion.", "Own my dream cars.", "Own a vacationhouse in the south of France."], noneSelectedTitle: nil)
-                
-                ExampleUnfoldedMilestoneRow(orderIndex: 5, title: "Being different.", info: "If I figure out how I can stand, I’ll have a better chance to succeed and I’ll have a reason as to why people would like my photos. This can also be good for any marketing.", attributes: ["Earn money passively."], noneSelectedTitle: nil)
-                
-                ExampleUnfoldedMilestoneRow(orderIndex: 4, title: "Knowing social media", info: "If I study the playing field first, I’ll know what I’ll be doing and have a big advantage.", attributes: ["Earn money passively."], noneSelectedTitle: nil)
-                
-                ExampleMilestoneRow(orderIndex: 3, text: "Get social media accounts and start posting.")
-                
-                ExampleUnfoldedMilestoneRow(orderIndex: 2, title: "Having the skill", info: "Before I can start trying to make money with photography, I need to learn it and get good at it.", attributes: nil, noneSelectedTitle: nil)
-                
-                ExampleMilestoneRow(orderIndex: 1, text: "Get a camera and editing software.")
-                    .padding(.bottom)
+    
+    private var sheet: some View {
+        NavigationStack {
+            SheetViewLayout(mode: .example, title: "What milestones do you need\nto achieve first?", titlePadding: 20/852) {
+                // Custom Section
+                ScrollView {
+                    ExampleUnfoldedMilestoneRow(orderIndex: 7, title: "Being successful with my photos", info: "So I can sell them to also earn money, getting sponsored, ... and start investing.", attributes: ["Earn money passively.", "Own my dream mansion.", "Own my dream cars.", "Own a vacationhouse in the south of France."], noneSelectedTitle: nil)
+                    
+                    ExampleUnfoldedMilestoneRow(orderIndex: 6, title: "Having grown on social media", info: "Attaining a good reputation and earning some money with it, mostly on social media.", attributes: ["Earn money passively.", "Own my dream mansion.", "Own my dream cars.", "Own a vacationhouse in the south of France."], noneSelectedTitle: nil)
+                    
+                    ExampleUnfoldedMilestoneRow(orderIndex: 5, title: "Being different.", info: "If I figure out how I can stand, I’ll have a better chance to succeed and I’ll have a reason as to why people would like my photos. This can also be good for any marketing.", attributes: ["Earn money passively."], noneSelectedTitle: nil)
+                    
+                    ExampleUnfoldedMilestoneRow(orderIndex: 4, title: "Knowing social media", info: "If I study the playing field first, I’ll know what I’ll be doing and have a big advantage.", attributes: ["Earn money passively."], noneSelectedTitle: nil)
+                    
+                    ExampleMilestoneRow(orderIndex: 3, text: "Get social media accounts and start posting.")
+                    
+                    ExampleUnfoldedMilestoneRow(orderIndex: 2, title: "Having the skill", info: "Before I can start trying to make money with photography, I need to learn it and get good at it.", attributes: nil, noneSelectedTitle: nil)
+                    
+                    ExampleMilestoneRow(orderIndex: 1, text: "Get a camera and editing software.")
+                        .padding(.bottom)
+                }
+                .scrollIndicators(.hidden)
+                .padding(.horizontal)
             }
-            .scrollIndicators(.hidden)
-            .padding(.horizontal)
         }
     }
 }

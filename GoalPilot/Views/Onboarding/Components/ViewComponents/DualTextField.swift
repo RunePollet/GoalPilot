@@ -20,11 +20,8 @@ struct DualTextField: View {
     var focusedField: FocusState<Self.Field?>.Binding
     
     @State private var showSecondTextField: Bool = false
-    @State private var showFirstDelete = false
-    @State private var showSecondDelete = false
     
     var body: some View {
-        
         VStack(spacing: 0) {
             // First text field
             TextField(firstPrompt, text: $firstTextField)
@@ -50,10 +47,7 @@ struct DualTextField: View {
         .onChange(of: focusedField.wrappedValue) { _, newValue in
             withAnimation(.easeInOut) {
                 self.showSecondTextField = newValue != nil
-                self.showFirstDelete = newValue == .first
-                self.showSecondDelete = newValue == .second
             }
         }
-        
     }
 }
