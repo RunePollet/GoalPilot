@@ -34,7 +34,8 @@ struct Question2View: View {
             keyboardDismissed()
         }
         .onboardingBottomBar(
-            nextButton: .init(isDisabled: { !goal.hasTitle }),
+            backButton: .init(dismissKeyboard: { focusedField = nil }),
+            nextButton: .init(isDisabled: { !goal.hasTitle }, dismissKeyboard: { focusedField = nil }),
             infoButton: {
                 print(showSheet)
                 showSheet = true

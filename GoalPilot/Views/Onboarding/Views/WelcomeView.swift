@@ -41,7 +41,7 @@ struct WelcomeView: View {
             focused = false
         }
         .onboardingBottomBar(
-            nextButton: .init(title: "Next", isDisabled: { textService.username.isEmpty })
+            nextButton: .init(title: "Next", isDisabled: { textService.username.isEmpty }, dismissKeyboard: { focused = false })
         )
         .onAppear {
             self.givenName = textService.username.trimmingCharacters(in: .whitespaces)

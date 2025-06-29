@@ -29,7 +29,8 @@ struct Question5View: View {
             isFocused = false
         }
         .onboardingBottomBar(
-            nextButton: .init(isDisabled: { !goal.hasChosenWay }),
+            backButton: .init(dismissKeyboard: { isFocused = false }),
+            nextButton: .init(isDisabled: { !goal.hasChosenWay }, dismissKeyboard: { isFocused = false }),
             infoButton: {
                 showSheet = true
             }

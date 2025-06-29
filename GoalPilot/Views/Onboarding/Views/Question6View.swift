@@ -39,7 +39,8 @@ struct Question6View: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .dismissKeyboardArea { focusedField = nil }
         .onboardingBottomBar(
-            nextButton: .init(isDisabled: { !persistedMilestones.filter { !$0.isConfigured }.isEmpty || persistedMilestones.isEmpty }),
+            backButton: .init(dismissKeyboard: { focusedField = nil }),
+            nextButton: .init(isDisabled: { !persistedMilestones.filter { !$0.isConfigured }.isEmpty || persistedMilestones.isEmpty }, dismissKeyboard: { focusedField = nil }),
             infoButton: {
                 showSheet = true
             }

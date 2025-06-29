@@ -32,7 +32,8 @@ struct Question3View: View {
             focusedField = nil
         }
         .onboardingBottomBar(
-            nextButton: .init(isDisabled: { !pillars.allSatisfy({ $0.isConfigured }) || pillars.isEmpty }),
+            backButton: .init(dismissKeyboard: { focusedField = nil }),
+            nextButton: .init(isDisabled: { !pillars.allSatisfy({ $0.isConfigured }) || pillars.isEmpty }, dismissKeyboard: { focusedField = nil }),
             infoButton: {
                 showSheet = true
             }

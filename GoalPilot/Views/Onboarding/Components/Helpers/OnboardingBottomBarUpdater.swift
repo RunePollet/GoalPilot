@@ -10,6 +10,7 @@ import SwiftUI
 struct OnboardingBottomBarUpdater: ViewModifier {
     @Environment(OnboardingViewModel.self) private var onboardingModel
     
+    var backButton: OnboardingViewModel.BackButton?
     var nextButton: OnboardingViewModel.NextButton?
     var primaryButton: OnboardingViewModel.BottomBarButton?
     var secondaryButton: OnboardingViewModel.BottomBarButton?
@@ -31,19 +32,20 @@ struct OnboardingBottomBarUpdater: ViewModifier {
     }
     
     func update() {
-        onboardingModel.toolbars[onboardingModel.currentView] = .init(nextButton: nextButton, primaryButton: primaryButton, secondaryButton: secondaryButton, infoButton: infoButton)
+        onboardingModel.toolbars[onboardingModel.currentView] = .init(backButton: backButton, nextButton: nextButton, primaryButton: primaryButton, secondaryButton: secondaryButton, infoButton: infoButton)
     }
 }
 
 extension View {
     /// Sets the given function as the bottom bar setter of the onboarding sequence when this view appears.
-    func onboardingBottomBar(nextButton: OnboardingViewModel.NextButton? = .init(),
+    func onboardingBottomBar(backButton: OnboardingViewModel.BackButton? = .init(),
+                             nextButton: OnboardingViewModel.NextButton? = .init(),
                              primaryButton: OnboardingViewModel.BottomBarButton? = nil,
                              secondaryButton: OnboardingViewModel.BottomBarButton? = nil,
                              infoButton: (() -> Void)? = nil,
                              delay: TimeInterval = .zero) -> some View {
         modifier(
-            OnboardingBottomBarUpdater(nextButton: nextButton, primaryButton: primaryButton, secondaryButton: secondaryButton, infoButton: infoButton, delay: delay)
+            OnboardingBottomBarUpdater(backButton: backButton, nextButton: nextButton, primaryButton: primaryButton, secondaryButton: secondaryButton, infoButton: infoButton, delay: delay)
         )
     }
 }

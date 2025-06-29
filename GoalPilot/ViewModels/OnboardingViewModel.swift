@@ -113,6 +113,7 @@ extension OnboardingViewModel {
     /// An object that describes a toolbar in the onboarding sequence.
     struct OnboardingToolbar: Equatable {
         var id: UUID = UUID()
+        var backButton: BackButton?
         var nextButton: NextButton?
         var primaryButton: BottomBarButton?
         var secondaryButton: BottomBarButton?
@@ -123,11 +124,22 @@ extension OnboardingViewModel {
         }
     }
     
+    /// An object that describes a back button in the onboarding sequence.
+    struct BackButton: Equatable {
+        var id: UUID = UUID()
+        var dismissKeyboard: (() -> Void)?
+        
+        static func == (lhs: BackButton, rhs: BackButton) -> Bool {
+            lhs.id == rhs.id
+        }
+    }
+    
     /// An object that describes a next button in the onboarding sequence.
     struct NextButton: Equatable {
         var id: UUID = UUID()
         var title: String = "Next"
         var isDisabled: () -> Bool = { false }
+        var dismissKeyboard: (() -> Void)?
         var completion: (() -> Void)?
         
         static func == (lhs: NextButton, rhs: NextButton) -> Bool {

@@ -102,17 +102,22 @@ extension OnboardingSequenceView {
     private var toolbar: some ToolbarContent {
         // Back button
         ToolbarItem(placement: .navigation) {
-            Button {
-                resignFirstResponder(beforeRunning: {
-                    onboardingModel.previousView()
-                }, withDelay: 0.4)
-            } label: {
-                HStack(spacing: 3) {
-                    Image(systemName: "chevron.left")
-                        .fontWeight(.semibold)
-                    Text("Back")
+            ZStack {
+                if let backButton = currentToolbar?.backButton {
+                    Button {
+                        backButton.dismissKeyboard?()
+                        DispatchQueue.main.asyncAfter(deadline: .now()) {
+                            onboardingModel.previousView()
+                        }
+                    } label: {
+                        HStack(spacing: 3) {
+                            Image(systemName: "chevron.left")
+                                .fontWeight(.semibold)
+                            Text("Back")
+                        }
+                        .opacity(onboardingModel.currentView.rawValue > (onboardingModel.isBeingReused ? 2 : 1) ? 1 : 0)
+                    }
                 }
-                .opacity(onboardingModel.currentView.rawValue > (onboardingModel.isBeingReused ? 2 : 1) ? 1 : 0)
             }
         }
         
@@ -121,10 +126,11 @@ extension OnboardingSequenceView {
             ZStack {
                 if let nextButton = currentToolbar?.nextButton {
                     Button {
-                        resignFirstResponder(beforeRunning: {
+                        nextButton.dismissKeyboard?()
+                        DispatchQueue.main.asyncAfter(deadline: .now()) {
                             onboardingModel.nextView()
                             nextButton.completion?()
-                        }, withDelay: 0.4)
+                        }
                     } label: {
                         Text(nextButton.title)
                             .bold()
@@ -136,30 +142,39 @@ extension OnboardingSequenceView {
         }
         
         // Bottom bar
-        ToolbarItemGroup(placement: .bottomBar) {
-            ZStack {
-                if let secondaryButton = currentToolbar?.secondaryButton {
-                    // Secondary Button
-                    Button {
-                        secondaryButton.action()
-                    } label: {
-                        Text(secondaryButton.title)
-                            .font(secondaryButton.style == .primary ? .title3 : .body)
-                            .fontWeight(secondaryButton.style == .primary ? .semibold : .regular)
-                            .foregroundStyle(.regularMaterial)
+        ToolbarItem(placement: .bottomBar) {
+            HStack {
+                ZStack {}
+                    .frame(maxWidth: .infinity)
+                
+                ZStack {
+                    if let secondaryButton = currentToolbar?.secondaryButton {
+                        // Secondary Button
+                        Button {
+                            secondaryButton.action()
+                        } label: {
+                            Text(secondaryButton.title)
+                                .font(secondaryButton.style == .primary ? .title3 : .body)
+                                .fontWeight(secondaryButton.style == .primary ? .semibold : .regular)
+                                .foregroundStyle(.regularMaterial)
+                        }
+                    } else if let primaryButton = currentToolbar?.primaryButton {
+                        self.primaryButton(primaryButton)
                     }
-                } else if let primaryButton = currentToolbar?.primaryButton {
-                    self.primaryButton(primaryButton)
                 }
-            }
-            
-            if let infoButton = currentToolbar?.infoButton {
-                Button {
-                    infoButton()
-                } label: {
-                    Image(systemName: "info.circle")
-                        .foregroundStyle(.regularMaterial)
+                .frame(maxWidth: .infinity)
+                
+                ZStack {
+                    if let infoButton = currentToolbar?.infoButton {
+                        Button {
+                            infoButton()
+                        } label: {
+                            Image(systemName: "info.circle")
+                                .foregroundStyle(.regularMaterial)
+                        }
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .trailing)
             }
         }
     }
@@ -316,18 +331,6 @@ extension OnboardingSequenceView {
                     starProgress = 1
                 }
             }
-        }
-    }
-    
-    private func resignFirstResponder(beforeRunning completion: @escaping () -> Void, withDelay delay: TimeInterval) {
-        let currentFirstResponder: Bool = UIResponder.currentFirstResponder != nil
-        if currentFirstResponder {
-            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-        }
-        
-        // Wait for first responder to resign
-        DispatchQueue.main.asyncAfter(deadline: .now() + (currentFirstResponder ? delay : 0.0)) {
-            completion()
         }
     }
 }
