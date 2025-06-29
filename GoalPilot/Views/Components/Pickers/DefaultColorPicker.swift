@@ -37,6 +37,7 @@ struct DefaultColorPicker: View {
             } header: {
                 if let subject {
                     Text("Choosing for: \(subject)")
+                        .foregroundStyle(Color.secondary)
                 }
             }
         }

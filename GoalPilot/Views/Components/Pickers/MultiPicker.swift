@@ -79,6 +79,7 @@ struct MultiPicker<Value: Equatable, Label: View, Row: View>: View {
                 } header: {
                     if let subject {
                         Text("Choosing for: \(subject)")
+                            .foregroundStyle(Color.secondary)
                     }
                 } footer: {
                     if let footer {
