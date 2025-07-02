@@ -79,7 +79,7 @@ class NotificationService: NSObject, Persistent {
     }
     
     @MainActor
-    func updateAllNotifications(for planning: Planning) {
+    func addAllNotifications(for planning: Planning) {
         if !locked {
             for activity in planning.activities {
                 activity.updateNotification(active: true)

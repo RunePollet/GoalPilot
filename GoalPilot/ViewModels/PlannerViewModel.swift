@@ -37,7 +37,7 @@ class PlannerViewModel: Persistent {
     init(_ modelContext: ModelContext) {
         fetchDates()
         restoreCurrentPlanningID()
-        updateCurrentPlanning(modelContext)
+        updateCurrentPlanning(modelContext: modelContext, refreshNotifications: false)
     }
     
     func save() {
@@ -98,15 +98,24 @@ extension PlannerViewModel {
 
 // Accessors for currentPlanning
 extension PlannerViewModel {
-    func updateCurrentPlanning(_ modelContext: ModelContext) {
+    func updateCurrentPlanning(modelContext: ModelContext, refreshNotifications: Bool) {
+        // Update the current planning property
         if let id = currentPlanningID,
            let planning: Planning = modelContext.registeredModel(for: id),
            let activePlanning = planning.activeValue {
             currentPlanning = activePlanning
-            return
+        } else {
+            currentPlanning = Planning.latest(from: modelContext)
         }
         
-        currentPlanning = Planning.latest(from: modelContext)
+        // Refresh the notifications
+        if refreshNotifications {
+            DispatchQueue.main.async { [self] in
+                if let currentPlanning {
+                    NotificationService.shared.addAllNotifications(for: currentPlanning)
+                }
+            }
+        }
     }
     
     @MainActor
@@ -120,10 +129,7 @@ extension PlannerViewModel {
         }
         
         currentPlanningID = newPlanning?.persistentModelID
-        updateCurrentPlanning(modelContext)
-        if let newPlanning {
-            notificationService.updateAllNotifications(for: newPlanning)
-        }
+        updateCurrentPlanning(modelContext: modelContext, refreshNotifications: true)
     }
     
     func resetCurrentPlanning() {
@@ -176,10 +182,7 @@ extension PlannerViewModel {
         notificationService.unlock()
         
         // Restore all notifications
-        updateCurrentPlanning(modelContext)
-        if let currentPlanning {
-            notificationService.updateAllNotifications(for: currentPlanning)
-        }
+        updateCurrentPlanning(modelContext: modelContext, refreshNotifications: true)
         let reminders = try? modelContext.fetch(Reminder.descriptor())
         for reminder in reminders?.filter({ Date(timeIntervalSinceReferenceDate: $0.deadlineTimeIntervalSinceReferenceDate) > Date() }) ?? [] {
             reminder.updateNotification(active: true)

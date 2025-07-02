@@ -30,7 +30,6 @@ struct PlanningDetailView: View {
                 streakModel.resetWeek()
             }
             planning.delete(from: modelContext)
-            plannerModel.updateCurrentPlanning(modelContext)
             forceDismissTrigger.toggle()
         }
         .navigationTitle(planning.title.capitalized)

@@ -81,7 +81,7 @@ struct JourneyTabView: View {
             }
             .onAppear {
                 navigationModel.isEditing = false
-                plannerModel.updateCurrentPlanning(modelContext)
+                plannerModel.updateCurrentPlanning(modelContext: modelContext, refreshNotifications: false)
                 timeOfDayModel.updateAccordingToTime()
             }
         }

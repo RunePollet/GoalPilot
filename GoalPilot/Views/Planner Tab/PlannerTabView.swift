@@ -27,7 +27,7 @@ struct PlannerTabView: View {
             }
         }
         .onAppear {
-            plannerModel.updateCurrentPlanning(modelContext)
+            plannerModel.updateCurrentPlanning(modelContext: modelContext, refreshNotifications: false)
         }
     }
 }

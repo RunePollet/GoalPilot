@@ -28,11 +28,13 @@ struct CreatePlanningView: View {
                 planning.parent = parent
                 planning.establishRelationship(for: \.parent, with: parent, within: modelContext)
             }, cancelCompletion: {
-                plannerModel.updateCurrentPlanning(modelContext)
+                plannerModel.updateCurrentPlanning(modelContext: modelContext, refreshNotifications: false)
             }, doneCompletion: {
                 // Update all notifications
-                if planning == plannerModel.currentPlanning {
-                    NotificationService.shared.updateAllNotifications(for: planning)
+                let allPlannings = Planning.getAll(from: modelContext)
+                if allPlannings.count == 1 && allPlannings.first == planning {
+                    NotificationService.shared.addAllNotifications(for: planning)
+                    plannerModel.updateCurrentPlanning(modelContext: modelContext, refreshNotifications: true)
                 }
                 
                 // Present the streak updater if this is the first planning

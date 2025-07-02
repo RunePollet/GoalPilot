@@ -55,10 +55,10 @@ final class Activity: RecurringPlanningEvent, NotificationRepresentable, Persist
         // Set start and end time
         let start = Calendar.current.dateComponents([.hour], from: .now)
         let end = Calendar.current.dateComponents([.hour], from: .now.addingTimeInterval(3600))
-        self.startHour = start.hour ?? 9
-        self.startMinute = 41
-        self.endHour = end.hour ?? 10
-        self.endMinute = 41
+        self.startHour = (start.hour ?? 8) + 1
+        self.startMinute = 0
+        self.endHour = (end.hour ?? 9) + 1
+        self.endMinute = 0
     }
     
     

@@ -68,7 +68,7 @@ final class Goal {
             notificationService.unlock()
             
             if let currentPlanning {
-                notificationService.updateAllNotifications(for: currentPlanning)
+                notificationService.addAllNotifications(for: currentPlanning)
             }
             for reminder in reminders {
                 reminder.updateNotification(active: true)
