@@ -82,8 +82,8 @@ class TimeOfDayViewModel {
         
         // Reference dates
         let now = Date()
-        let sunrise = (start: sunriseDate.addingTimeInterval(-1800), end: sunriseDate.addingTimeInterval(1800))
-        let sunset = (start: sunsetDate.addingTimeInterval(-1800), end: sunsetDate.addingTimeInterval(1800))
+        let sunrise = (start: sunriseDate.addingTimeInterval(-3600), end: sunriseDate.addingTimeInterval(3600))
+        let sunset = (start: sunsetDate.addingTimeInterval(-3600), end: sunsetDate.addingTimeInterval(3600))
         
         // Determine what the sky should be
         if now < sunrise.start || now > sunset.end {
