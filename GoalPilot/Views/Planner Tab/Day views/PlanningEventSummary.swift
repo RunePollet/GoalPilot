@@ -15,6 +15,7 @@ struct PlanningEventSummary: View {
     @Environment(StreakViewModel.self) private var streakModel
     
     var showDoneButtons: Bool
+    var addNewEvent: () -> Void
     
     // Accessibiltiy
     var activities: [Activity]?
@@ -30,53 +31,56 @@ struct PlanningEventSummary: View {
     @State private var editReminder: Reminder?
     
     var body: some View {
-        StackedPlanningEventSummary {
-            // Activities
-            if let activities, !activities.isEmpty {
-                Section("Activities") {
-                    ForEach(activities) { activity in
-                        ActivityTile(activity: activity, canBeCompleted: showDoneButtons && !streakModel.completedActivities.contains(activity.id), isEditing: navigationModel.isEditing) {
-                            if let currentPlanning = plannerModel.currentPlanning {
-                                streakModel.enlistAsCompleted(activity: activity, currentPlanning: currentPlanning)
-                            }
-                        }
-                        .editable(isEditing: navigationModel.isEditing || navigationModel.isCreating) {
-                            showEditSheetFor = activity
-                        }
-                    }
-                }
-            }
-            
-            // Notifications
-            if let recurringNotes, !recurringNotes.isEmpty {
-                Section("Notes") {
-                    ForEach(recurringNotes) { recurringNote in
-                        NotificationTile(notification: recurringNote, isEditing: navigationModel.isEditing)
-                            .editable(isEditing: navigationModel.isEditing || navigationModel.isCreating) {
-                                editRecurringNote = recurringNote
-                            }
-                    }
-                }
-            }
-            
-            // Reminders
-            if let reminders, !reminders.isEmpty {
-                Section("Reminders") {
-                    ForEach(reminders) { reminder in
-                        NotificationTile(notification: reminder, isEditing: navigationModel.isEditing)
-                            .editable(isEditing: navigationModel.isEditing || navigationModel.isCreating) {
-                                editReminder = reminder
-                            }
-                    }
-                }
-            }
-            
+        Group {
             // No events message
             if (activities?.isEmpty ?? true) && (recurringNotes?.isEmpty ?? true) && (reminders?.isEmpty ?? true) {
-                Text("No events here")
-                    .font(.caption)
-                    .foregroundStyle(Color.secondary)
-                    .padding(.top)
+                ContentMissingView(icon: "sparkle.magnifyingglass", title: "No events yet", info: "Events can be an activity or a recurring note, only activities can contribute to your weekly streak.") {
+                    Button("Add an event") {
+                        addNewEvent()
+                    }
+                }
+            } else {
+                StackedPlanningEventSummary {
+                    // Activities
+                    if let activities, !activities.isEmpty {
+                        Section("Activities") {
+                            ForEach(activities) { activity in
+                                ActivityTile(activity: activity, canBeCompleted: showDoneButtons && !streakModel.completedActivities.contains(activity.id), isEditing: navigationModel.isEditing) {
+                                    if let currentPlanning = plannerModel.currentPlanning {
+                                        streakModel.enlistAsCompleted(activity: activity, currentPlanning: currentPlanning)
+                                    }
+                                }
+                                .editable(isEditing: navigationModel.isEditing || navigationModel.isCreating) {
+                                    showEditSheetFor = activity
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Notifications
+                    if let recurringNotes, !recurringNotes.isEmpty {
+                        Section("Notes") {
+                            ForEach(recurringNotes) { recurringNote in
+                                NotificationTile(notification: recurringNote, isEditing: navigationModel.isEditing)
+                                    .editable(isEditing: navigationModel.isEditing || navigationModel.isCreating) {
+                                        editRecurringNote = recurringNote
+                                    }
+                            }
+                        }
+                    }
+                    
+                    // Reminders
+                    if let reminders, !reminders.isEmpty {
+                        Section("Reminders") {
+                            ForEach(reminders) { reminder in
+                                NotificationTile(notification: reminder, isEditing: navigationModel.isEditing)
+                                    .editable(isEditing: navigationModel.isEditing || navigationModel.isCreating) {
+                                        editReminder = reminder
+                                    }
+                            }
+                        }
+                    }
+                }
             }
         }
         .onChange(of: total) { oldValue, newValue in

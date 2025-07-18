@@ -69,6 +69,7 @@ struct PlannerDayView: View {
         VStack(spacing: 0) {
             PlanningEventSummary(
                 showDoneButtons: Calendar.current.dateComponents([.weekOfYear, .year], from: date) == Calendar.current.dateComponents([.weekOfYear, .year], from: .now),
+                addNewEvent: { showAddDialog = true },
                 activities: activities,
                 recurringNotes: recurringNotes,
                 reminders: reminders

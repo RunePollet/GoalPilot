@@ -43,6 +43,7 @@ struct DayDetailView: View {
         
         PlanningEventSummary(
             showDoneButtons: false,
+            addNewEvent: { showDialog = true },
             activities: activities,
             recurringNotes: recurringNotes
         )

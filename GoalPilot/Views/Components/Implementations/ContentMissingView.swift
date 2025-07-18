@@ -19,7 +19,9 @@ struct ContentMissingView<Content: View>: View {
             Image(systemName: icon)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 80)
+                .frame(width: 65)
+                .foregroundStyle(Color.accentColor, Color.accentColor.secondary)
+                .padding()
         } description: {
             Text(title)
                 .font(.title3)
