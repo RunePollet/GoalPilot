@@ -32,17 +32,8 @@ struct NotificationForm<T: NotificationRepresentable & PlanningEvent & Persisten
             
             // Title, description and color
             Section {
-                NavigationLink(value: TextPropertyEditor<ObservableModel<T>>.Model(root: wrapper, keyPath: \.model.subtitle, title: "Title")) {
-                    LabeledContent("Title", value: wrapper.model.subtitle)
-                }
-                NavigationLink(value: TextPropertyEditor<ObservableModel<T>>.Model(root: wrapper, keyPath: \.model.body, title: "Title", axis: .vertical)) {
-                    LabeledContent {
-                        Text(wrapper.model.body)
-                            .lineLimit(nil)
-                    } label: {
-                        Text("Description")
-                    }
-                }
+                TextField("Title", text: $wrapper.model.subtitle)
+                TextField("Description", text: $wrapper.model.body, axis: .vertical)
                 HStack {
                     // Color Picker
                     ColorPicker("Color", selection: $wrapper.model.color)
@@ -87,9 +78,6 @@ struct NotificationForm<T: NotificationRepresentable & PlanningEvent & Persisten
                 .frame(maxWidth: .infinity)
             }
         }
-        .navigationDestination(for: TextPropertyEditor<ObservableModel<T>>.Model.self) { model in
-            TextPropertyEditor(model: model)
-        }
         .navigationDestination(for: RecurringNote.self) { recurringNote in
             DuplicationView(object: recurringNote, objectDisplayName: "Recurring Note")
         }
@@ -100,8 +88,10 @@ struct NotificationForm<T: NotificationRepresentable & PlanningEvent & Persisten
         }
         .confirmationDialog("This cannot be undone", isPresented: $showRemoveDialog) {
             Button("Remove", role: .destructive) {
-                wrapper.model.delete(from: modelContext)
                 dismiss()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    wrapper.model.delete(from: modelContext)
+                }
             }
         }
         .onAppear {

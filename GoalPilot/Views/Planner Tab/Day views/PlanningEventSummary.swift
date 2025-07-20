@@ -39,6 +39,7 @@ struct PlanningEventSummary: View {
                         addNewEvent()
                     }
                 }
+                .background(Color(uiColor: .systemGroupedBackground))
             } else {
                 StackedPlanningEventSummary {
                     // Activities

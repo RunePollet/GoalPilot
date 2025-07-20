@@ -17,11 +17,11 @@ struct SettingsView: View {
     @Environment(NavigationViewModel.self) private var navigationModel
     
     enum Destination {
-        case goal, pillars, milestonesAndPlannings, notifications, recurringNotes, name, appIcon
+        case goal, pillars, milestonesAndPlannings, notifications, recurringNotes, appIcon
     }
     
     @AppStorage("STANDBY_MODE") private var enableStandby = false
-    @State private var username = TextService.shared.username
+    @State private var textService = TextService.shared
     
     var body: some View {
         Form {
@@ -56,8 +56,9 @@ struct SettingsView: View {
             
             Section {
                 // Name
-                NavigationLink(value: Destination.name) {
-                    LabeledContent("Name", value: username)
+                LabeledContent("Name") {
+                    TextField("username", text: $textService[\.username])
+                        .multilineTextAlignment(.trailing)
                 }
                 
                 // App Icon
@@ -134,8 +135,6 @@ struct SettingsView: View {
             ReminderSettings()
         case .recurringNotes:
             RecurringNoteSettings()
-        case .name:
-            UsernameEditor()
         case .appIcon:
             SelectAppIconView()
         }

@@ -35,6 +35,7 @@ struct SettingsList<Item: Hashable & Identifiable, Destination: View, CreateDest
                         create = true
                     }
                 }
+                .background(Color(uiColor: .systemGroupedBackground))
             }
         }
         .navigationTitle(title)

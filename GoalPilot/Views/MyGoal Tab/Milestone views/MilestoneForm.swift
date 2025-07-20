@@ -10,7 +10,7 @@ import SwiftData
 
 /// A form containing all data of a milestone.
 struct MilestoneForm: View {
-    @State var milestone: Milestone
+    @Bindable var milestone: Milestone
     var isEditing: Bool
     var isCreating: Bool
     var delete: (() -> Void)?
@@ -28,20 +28,11 @@ struct MilestoneForm: View {
         Form {
             // Title and description
             Section {
-                SmartNavigationLink(isActive: isEditing || isCreating, value: TextPropertyEditor<Milestone>.Model(root: milestone, keyPath: \.title, title: "Title")) {
-                    LabeledContent("Title", value: milestone.title)
-                }
-                SmartNavigationLink(isActive: isEditing || isCreating, value: TextPropertyEditor<Milestone>.Model(root: milestone, keyPath: \.info.boundString, title: "Description", axis: .vertical)) {
-                    LabeledContent {
-                        Text(milestone.info.boundString)
-                            .lineLimit(nil)
-                    } label: {
-                        Text("Description")
-                    }
-
-                }
+                TextField("Title", text: $milestone.title)
+                TextField("Description", text: $milestone.info.boundString, axis: .vertical)
             }
             .labeledContentStyle(.plain)
+            .disabled(!isEditing && !isCreating)
             
             // Pillars
             Section {
@@ -106,7 +97,7 @@ struct MilestoneForm: View {
                 PlanningDetailView(planning: planning)
             } else {
                 ContentMissingView(
-                    icon: "text.magnifyingglass",
+                    icon: "exclamationmark.triangle",
                     title: "Missing planning",
                     info:
                         """
@@ -118,10 +109,8 @@ struct MilestoneForm: View {
                         Link("Contact me", destination: url)
                     }
                 }
+                .background(Color(uiColor: .systemGroupedBackground))
             }
-        }
-        .navigationDestination(for: TextPropertyEditor<Milestone>.Model.self) { model in
-            TextPropertyEditor(model: model)
         }
         .sheet(isPresented: $createPlanning) {
             NavigationModelStack(isCreating: true) {

@@ -24,17 +24,8 @@ struct PillarForm: View {
         Form {
             // Title and description
             Section {
-                NavigationLink(value: TextPropertyEditor<Pillar>.Model(root: pillar, keyPath: \.title, title: "Title")) {
-                    LabeledContent("Title", value: pillar.title)
-                }
-                NavigationLink(value: TextPropertyEditor<Pillar>.Model(root: pillar, keyPath: \.info.boundString, title: "Description", axis: .vertical)) {
-                    LabeledContent {
-                        Text(pillar.info ?? "")
-                            .lineLimit(nil)
-                    } label: {
-                        Text("Description")
-                    }
-                }
+                TextField("Title", text: $pillar.title)
+                TextField("Description", text: $pillar.info.boundString, axis: .vertical)
             }
             .labeledContentStyle(.plain)
             .foregroundStyle(.primary, Color.accentColor)
@@ -90,9 +81,6 @@ struct PillarForm: View {
             }
         } message: {
             Text("Are you sure this pillar isn't a part of your dream anymore? You won't be able to recover it after removal.")
-        }
-        .navigationDestination(for: TextPropertyEditor<Pillar>.Model.self) { model in
-            TextPropertyEditor(model: model)
         }
         .sheet(isPresented: $showImagePicker) {
             ImagePicker(selectedImageData: $pillar.imageData)

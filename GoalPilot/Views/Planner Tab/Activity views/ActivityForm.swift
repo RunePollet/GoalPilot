@@ -24,19 +24,10 @@ struct ActivityForm: View {
             Form {
                 // Title, info and color
                 Section {
-                    NavigationLink(value: TextPropertyEditor<Activity>.Model(root: activity, keyPath: \.subtitle, title: "Title")) {
-                        LabeledContent("Title", value: activity.subtitle)
-                    }
-                    NavigationLink(value: TextPropertyEditor<Activity>.Model(root: activity, keyPath: \.body, title: "Description", axis: .vertical)) {
-                        LabeledContent {
-                            Text(activity.body)
-                                .lineLimit(nil)
-                        } label: {
-                            Text("Description")
-                        }
-                    }
+                    TextField("Title", text: $activity.subtitle)
+                    TextField("Description", text: $activity.body, axis: .vertical)
                     HStack {
-                        ColorPicker("Color", selection: .init(get: { self.activity.color }, set: { self.activity.color = $0 }))
+                        ColorPicker("Color", selection: $activity[\.color])
                         
                         Button {
                             showDefaultColors = true
@@ -83,15 +74,12 @@ struct ActivityForm: View {
                     .frame(maxWidth: .infinity)
                 }
             }
-            .navigationDestination(for: TextPropertyEditor<Activity>.Model.self) { model in
-                TextPropertyEditor(model: model)
-            }
             .navigationDestination(for: Activity.self) { activity in
                 DuplicationView(object: activity, objectDisplayName: "activity")
             }
             .sheet(isPresented: $showDefaultColors) {
                 NavigationStack {
-                    DefaultColorPicker(selection: .init(get: { activity.defaultColor }, set: { activity.defaultColor = $0 }), subject: activity.subtitle != "" ? activity.subtitle : nil)
+                    DefaultColorPicker(selection: $activity[\.defaultColor], subject: activity.subtitle != "" ? activity.subtitle : nil)
                 }
             }
             .confirmationDialog("This action cannot be undone", isPresented: $showRemoveDialog) {

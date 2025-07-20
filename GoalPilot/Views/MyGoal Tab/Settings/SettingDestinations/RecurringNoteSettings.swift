@@ -26,7 +26,7 @@ struct RecurringNoteSettings: View {
     @Query(Planning.descriptor()) private var plannings: [Planning]
     
     var body: some View {
-        NotificationSettings(forType: RecurringNote.self, title: "Recurring Notes", missingNotificationsTitle: "Missing notes", createNewTitle: "Create recurring note", createNew: $createRecurringNote)
+        NotificationSettings(forType: RecurringNote.self, title: "Recurring Notes", missingNotificationsTitle: "Missing notes", createNewTitle: "Create recurring note", createNew: $showPlanningDialog)
             .editToolbar(showEditButton: !navigationModel.hideEditButton, showAddButton: true) {
                 showPlanningDialog = true
             }

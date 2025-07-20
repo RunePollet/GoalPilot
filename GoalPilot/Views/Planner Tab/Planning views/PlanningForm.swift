@@ -10,7 +10,7 @@ import SwiftData
 
 /// A form containing all data of a planning.
 struct PlanningForm: View {
-    var planning: Planning
+    @Bindable var planning: Planning
     var isEditing: Bool
     var isCreating: Bool
     var delete: (() -> Void)?
@@ -38,14 +38,11 @@ struct PlanningForm: View {
         Form {
             // Title and description
             Section {
-                SmartNavigationLink(isActive: isEditing || isCreating, value: TextPropertyEditor<Planning>.Model(root: planning, keyPath: \.title, title: "Title")) {
-                    LabeledContent("Title", value: planning.title)
-                }
-                SmartNavigationLink(isActive: isEditing || isCreating, value: TextPropertyEditor<Planning>.Model(root: planning, keyPath: \.info.boundString, title: "Description", axis: .vertical)) {
-                    LabeledContent("Description", value: planning.info ?? "")
-                }
+                TextField("Title", text: $planning.title)
+                TextField("Description", text: $planning.info.boundString, axis: .vertical)
             }
             .labeledContentStyle(.plain)
+            .disabled(!isEditing && !isCreating)
             
             // Days
             Section {
@@ -68,9 +65,6 @@ struct PlanningForm: View {
                 }
                 .frame(maxWidth: .infinity)
             }
-        }
-        .navigationDestination(for: TextPropertyEditor<Planning>.Model.self) { model in
-            TextPropertyEditor(model: model)
         }
         .navigationDestination(for: SelectedWeekday.self) { selection in
             DayDetailView(planning: selection.planning, weekday: selection.weekday)

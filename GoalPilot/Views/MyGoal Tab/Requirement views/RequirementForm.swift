@@ -22,17 +22,8 @@ struct RequirementForm: View {
         Form {
             // Title and description
             Section {
-                NavigationLink(value: TextPropertyEditor<Requirement>.Model(root: requirement, keyPath: \.title, title: "Title")) {
-                    LabeledContent("Title", value: requirement.title)
-                }
-                NavigationLink(value: TextPropertyEditor<Requirement>.Model(root: requirement, keyPath: \.info.boundString, title: "Description")) {
-                    LabeledContent {
-                        Text(requirement.info.boundString)
-                            .lineLimit(nil)
-                    } label: {
-                        Text("Description")
-                    }
-                }
+                TextField("Title", text: $requirement.title)
+                TextField("Description", text: $requirement.info.boundString, axis: .vertical)
             }
             .labeledContentStyle(.plain)
             .foregroundStyle(.primary, Color.accentColor)
@@ -44,9 +35,6 @@ struct RequirementForm: View {
                 }
                 .frame(maxWidth: .infinity)
             }
-        }
-        .navigationDestination(for: TextPropertyEditor<Requirement>.Model.self) { model in
-            TextPropertyEditor(model: model)
         }
         .confirmationDialog("", isPresented: $showRemoveDialog) {
             Button("Remove", role: .destructive) {

@@ -48,6 +48,7 @@ struct NotificationSettings<T: NotificationRepresentable & PlanningEvent & Persi
                     createNew = true
                 }
             }
+            .background(Color(uiColor: .systemGroupedBackground))
         }
     }
 }

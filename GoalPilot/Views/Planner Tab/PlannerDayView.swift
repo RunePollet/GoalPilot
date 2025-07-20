@@ -115,7 +115,7 @@ struct PlannerDayView: View {
                     }
                 } else {
                     ContentMissingView(
-                        icon: "text.magnifyingglass",
+                        icon: "sparkle.magnifyingglass",
                         title: "Missing planning",
                         info:
                             """
@@ -127,6 +127,7 @@ struct PlannerDayView: View {
                             Link("Contact me", destination: url)
                         }
                     }
+                    .background(Color(uiColor: .systemGroupedBackground))
                 }
             }
         }

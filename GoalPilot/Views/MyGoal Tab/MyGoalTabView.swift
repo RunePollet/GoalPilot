@@ -133,6 +133,7 @@ struct MyGoalTabView: View {
                         createMilestone = true
                     }
                 }
+                .background(Color(uiColor: .systemGroupedBackground))
             }
         }
     }

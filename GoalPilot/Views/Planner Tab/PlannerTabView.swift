@@ -24,6 +24,7 @@ struct PlannerTabView: View {
                         globalModel.showFirstPlanningCreationSheet()
                     }
                 }
+                .background(Color(uiColor: .systemGroupedBackground))
             }
         }
         .onAppear {
