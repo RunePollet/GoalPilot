@@ -20,14 +20,18 @@ class TextService: Persistent {
     var weeklyFeedbackExclamations: [String] {
         ["Excellent job this week!", "Great work this week!", "You’ve nailed it this week \(username)."]
     }
-    var greetingBasedOnTimeOfDay: String {
+    func greetingBasedOnTimeOfDay(_ timeOfDay: TimeOfDayViewModel.TimeOfDay) -> String {
         let hour = Calendar.current.component(.hour, from: .now)
-        switch hour {
-        case 7...11:
-            return "Good morning, \(username)"
-        case 12...18:
-            return "Good afternoon, \(username)"
-        case 19...23:
+        switch timeOfDay {
+        case .sunrise:
+            return "Rise and shine, \(username)!"
+        case .day:
+            if hour < 12 {
+                return "Good morning, \(username)"
+            } else {
+                return "Good afternoon, \(username)"
+            }
+        case .sunset:
             return "Good evening, \(username)"
         default:
             return "Good night, \(username)"

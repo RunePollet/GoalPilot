@@ -82,7 +82,9 @@ struct JourneyTabView: View {
             .onAppear {
                 navigationModel.isEditing = false
                 plannerModel.updateCurrentPlanning(modelContext: modelContext, refreshNotifications: false)
-                timeOfDayModel.updateAccordingToTime()
+            }
+            .task {
+                await timeOfDayModel.updateTimeOfDay()
             }
         }
         .environment(navigationModel)
@@ -138,7 +140,7 @@ struct JourneyTabView: View {
     private var titleBar: some View {
         HStack(alignment: .firstTextBaseline) {
             // Title
-            Text(TextService.shared.greetingBasedOnTimeOfDay)
+            Text(TextService.shared.greetingBasedOnTimeOfDay(timeOfDayModel.currentTimeOfDay))
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .lineLimit(2)
