@@ -64,6 +64,17 @@ struct JourneyTabView: View {
                 Landscape.TabBarBackgroundHill()
                     .ignoresSafeArea()
             }
+            .overlay(alignment: .top) {
+                Group {
+                    if let url = URL(string: "https://weatherkit.apple.com/legal-attribution.html") {
+                        Link("Weather", destination: url)
+                    } else {
+                        Text("Weather")
+                    }
+                }
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+            }
             .navigationDestination(for: SelectedPlanning.self) { selection in
                 if selection.isCurrent {
                     PlannerDayView(plannerModel: plannerModel)
@@ -86,17 +97,6 @@ struct JourneyTabView: View {
             .task {
                 await timeOfDayModel.updateTimeOfDay()
             }
-        }
-        .overlay(alignment: .top) {
-            Group {
-                if let url = URL(string: "https://weatherkit.apple.com/legal-attribution.html") {
-                    Link("Weather", destination: url)
-                } else {
-                    Text("Weather")
-                }
-            }
-            .font(.footnote)
-            .foregroundStyle(.secondary)
         }
         .environment(navigationModel)
         .onChange(of: globalModel.resetUITrigger) {
