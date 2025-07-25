@@ -64,8 +64,6 @@ class TimeOfDayViewModel {
                 // Get sunrise and sunset dates
                 let sunrise = weather.dailyForecast.first?.sun.sunrise
                 let sunset = weather.dailyForecast.first?.sun.sunset
-                print("sunrise: \(sunrise)")
-                print("sunset: \(sunset)")
                 
                 // Set the sky variation
                 await MainActor.run {
